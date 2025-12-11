@@ -22,6 +22,9 @@ workflows:
           - ~/.gradle
           - node_modules
     scripts:
+      - name: Install Bun
+        script: |
+          curl -L https://bun.sh/install | bash
       - name: Clean previous Android build
         script: |
           rm -rf android/app/build
