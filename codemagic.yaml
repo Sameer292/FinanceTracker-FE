@@ -16,7 +16,7 @@ workflows:
         JAVA_VERSION: 17
         GRADLE_OPTS: -Xmx4g
       android_signing:
-        - my_keystore
+        - codemagic
     cache:
         cache_paths:
           - ~/.gradle
