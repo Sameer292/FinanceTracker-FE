@@ -16,7 +16,7 @@ workflows:
         JAVA_VERSION: 17
         GRADLE_OPTS: -Xmx4g
       android_signing:
-        - codemagic
+        - iamsameer
     cache:
         cache_paths:
           - ~/.gradle
