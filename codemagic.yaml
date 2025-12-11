@@ -19,12 +19,10 @@ workflows:
         - iamsameer
     cache:
         cache_paths:
+          - ~/.npm
           - ~/.gradle
           - node_modules
     scripts:
-      - name: Install Bun
-        script: |
-          curl -L https://bun.sh/install | bash
       - name: Clean previous Android build
         script: |
           rm -rf android/app/build
@@ -34,12 +32,12 @@ workflows:
             echo " package.json unchanged, using cached node_modules"
           else
             echo " Installing dependencies..."
-            bun ci
+            npm ci
             cp package.json .package-lock.hash
           fi
       - name: Prebuild Expo
         script: |
-          bunx expo prebuild --platform android --clean
+          npx expo prebuild --platform android --clean
       - name: Build Android release
         script: |
           cd android
