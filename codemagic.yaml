@@ -1,0 +1,54 @@
+workflows:
+  expo-android:
+    name: Expo Android Build 
+    max_build_duration: 60
+    triggering:
+      events:
+      - push
+      branch_patterns:
+      - pattern: "main"
+        include: true
+        source: true
+      cancel_previous_builds: true
+    environment:
+      vars:
+        NODE_VERSION: 18
+        JAVA_VERSION: 17
+        GRADLE_OPTS: -Xmx4g
+      android_signing:
+        - my_keystore
+    cache:
+        cache_paths:
+          - ~/.gradle
+          - node_modules
+    scripts:
+      - name: Clean previous Android build
+        script: |
+          rm -rf android/app/build
+      - name: Install dependencies
+        script: |
+          if [ -d "node_modules" ] && cmp -s package.json .package-lock.hash; then
+            echo " package.json unchanged, using cached node_modules"
+          else
+            echo " Installing dependencies..."
+            bun ci
+            cp package.json .package-lock.hash
+          fi
+      - name: Prebuild Expo
+        script: |
+          bunx expo prebuild --platform android --clean
+      - name: Build Android release
+        script: |
+          cd android
+          ./gradlew clean
+          ./gradlew assembleRelease
+    artifacts:
+    - android/app/build/outputs/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - strangeisnoone@gmail.com
+          - paudelsameer888@gmail.com
+        notify:
+          success: true
+          failure: true
