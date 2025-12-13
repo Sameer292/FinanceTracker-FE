@@ -1,3 +1,5 @@
+import { pieDataItem } from "react-native-gifted-charts";
+
 export function splitByDateRanges<T>(data: { date: string }[]): { today: T[], yesterday: T[], lastWeek: T[] } {
   const today = new Date();
   const yesterday = new Date(today);
@@ -32,4 +34,45 @@ export function splitByDateRanges<T>(data: { date: string }[]): { today: T[], ye
     yesterday: yesterdayArray,
     lastWeek: lastWeekArray
   };
+}
+
+export type TopTransactionsResult = {
+  chartData: pieDataItem[]
+};
+
+export function getTopTransactionsWithCategories(
+  transactions: TransactionType[],
+  limit = 4
+): TopTransactionsResult {
+  const expenses = transactions
+    .filter(t => t.type === 'expense')
+    .sort((a, b) => b.amount - a.amount);
+
+  const top = expenses.slice(0, limit);
+  const rest = expenses.slice(limit);
+
+  const chartData: pieDataItem[] = top.map(tx => ({
+    value: tx.amount,
+    color: tx.category.color,
+    text: tx.category.name,
+    category: tx.category,
+  }));
+
+  const othersTotal = rest.reduce((sum, tx) => sum + tx.amount, 0);
+
+  if (othersTotal > 0) {
+    chartData.push({
+      value: othersTotal,
+      text: 'Others',
+      color: '#64748B',
+      category: {
+        id: -1,
+        name: 'Others',
+        color: '#64748B',
+        icon: 'more-horiz',
+      },
+    } as pieDataItem);
+  }
+
+  return { chartData };
 }

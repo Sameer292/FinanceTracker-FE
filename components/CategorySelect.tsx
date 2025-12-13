@@ -1,28 +1,45 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { Feather } from "@expo/vector-icons";
 import { Dialog } from "heroui-native";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { ExpenseCategories as categories } from '../assets/expenses';
+import { useState } from "react";
 
-export function CategorySelect({ selectedCategories, setSelectedCategories, ToggleItem, selectAll }: CategorySelectProps) {
+export function CategorySelect({ selectedCategories, ToggleItem, selectAll, removeAll, categorieslength }: CategorySelectProps) {
+  const [isOpen, setIsOpen] = useState(false)
+  const handleSelection = () => {
+    if (selectedCategories.length > 0) {
+      removeAll()
+    } else if (selectedCategories.length === 0) {
+      selectAll()
+    }
+  }
   return (
     <Dialog className='flex-1'>
-      <Dialog.Trigger className='bg-[#C8F5D6] flex-1 items-center rounded-full'>
-        <View className='flex-1 w-full items-center rounded-full h-14 justify-center ' >
-          <Text className='text-[#15c34f] text-lg font-bold ' >Categories</Text>
+      <Dialog.Trigger onPress={() => setIsOpen(true)} className={`${(isOpen || selectedCategories.length) ? 'bg-[#C8F5D6]' : 'bg-[#EEF0F1]'} flex-1 items-center rounded-full`}>
+        <View className='flex-1 w-full items-center flex-row rounded-full h-14 justify-between px-6 ' >
+          <Text className={`${(isOpen || selectedCategories.length) ? 'text-[#15c34f]' : ''} text-lg font-bold `} >Categories</Text>
+          {
+            isOpen ? (
+              <Feather name={'chevron-up'} color={'#15c34f'} size={20} />
+            ) : (
+              <Feather name={'chevron-down'} color={`${selectedCategories.length && '#15c34f'}`} size={20} />
+            )
+          }
         </View>
       </Dialog.Trigger>
-      <Dialog.Portal className='px-4 -mt-70'>
-        <Dialog.Overlay />
-        <Dialog.Content isSwipeable={false} className="rounded-2xl bg-white shadow-lg">
+      <Dialog.Portal className='px-4 -mt-90 '>
+        <Dialog.Overlay onPress={() => setIsOpen(false)} />
+        <Dialog.Content isSwipeable={false} className="border border-[#F3F4F6] rounded-2xl bg-white shadow-[1px_1px_25px_5px_rgba(0,0,0,0.29)]">
 
           {/* Header */}
-          <View className="flex-row items-center justify-between border-b border-gray-200 px-4 py-3">
+          <View className="flex-row items-center justify-between border-b border-[#F3F4F6] px-4 py-3">
             <Text className="text-md font-bold uppercase tracking-wider text-gray-500">
               Select Categories
             </Text>
 
-            <Pressable onPress={selectAll}>
-              <Text className="text-md font-medium text-[#15c34f]">Select All</Text>
+            <Pressable onPress={handleSelection}>
+              <Text className="text-md font-medium text-[#15c34f]">{(selectedCategories.length > 0) ? 'Deselect All' : 'Select All'}</Text>
             </Pressable>
           </View>
 
@@ -63,7 +80,9 @@ export function CategorySelect({ selectedCategories, setSelectedCategories, Togg
             })}
           </ScrollView>
 
-          {/* Footer */}
+
+          {/* Might be needed later */}
+          {/* Footer
           <View className="border-t border-gray-200 p-3">
             <Dialog.Close asChild>
               <Pressable
@@ -73,7 +92,7 @@ export function CategorySelect({ selectedCategories, setSelectedCategories, Togg
                 <Text className="font-bold text-white">Apply Filters</Text>
               </Pressable>
             </Dialog.Close>
-          </View>
+          </View> */}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog>

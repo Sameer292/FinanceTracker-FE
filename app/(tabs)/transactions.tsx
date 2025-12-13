@@ -1,12 +1,10 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
-import { ExpenseCategories as categories, MyExpenses } from 'app/assets/expenses'
+import { ExpenseCategories as categories, MyTransactions } from 'app/assets/expenses'
 import { CategorySelect } from 'app/components/CategorySelect'
-// import { CategorySelect } from 'app/components/CategorySelect'
 import { DeteSelect } from 'app/components/DateSelect'
 import { TransactionCard } from 'app/components/TransactionCard'
 import { splitByDateRanges } from 'app/lib/utilityFns'
 import { Link } from 'expo-router'
-import { Dialog } from 'heroui-native'
 import React, { useState } from 'react'
 import { Pressable, ScrollView, Text, View } from 'react-native'
 
@@ -21,23 +19,28 @@ export default function transactions() {
   const selectAll = () => {
     setSelectedCategories(categories.map((c) => c.id));
   }
-  const filteredTransactions = MyExpenses.filter((transaction) => {
+
+  const removeAll = () => {
+    setSelectedCategories([]);
+  }
+
+  const filteredTransactions = MyTransactions.filter((transaction) => {
     if (selectedCategories.length === 0) return true
     return selectedCategories.includes(transaction.category.id)
   })
-  const { today, yesterday, lastWeek } = splitByDateRanges<MyExpenses>(filteredTransactions)
+  const { today, yesterday, lastWeek } = splitByDateRanges<TransactionType>(filteredTransactions)
 
   return (
     <View className='bg-[#F6F8F6] gap-4 flex h-full items-center justify-center' >
       {/* Header */}
-      <View className='flex flex-row px-4 mt-2 gap-4 items-center'>
-        <View style={{ flex: 2, }} className='items-center ' >
+      <View className='flex flex-row px-4 mt-2 items-center'>
+        <View className='items-center flex-1' >
           <Text className='text-2xl font-bold ' >
             Transactions
           </Text>
         </View>
-        <Link href={'/addTransactions'}>
-          <View style={{ position: 'absolute', right: 20, }} className='bg-[#13EC5B] rounded-full'>
+        <Link href={'/addTransactions'} className='absolute right-5'>
+          <View className='bg-[#13EC5B] rounded-full'>
             <MaterialIcons size={25} style={{ fontWeight: '900' }} name="add" color="white" />
           </View>
         </Link>
@@ -46,7 +49,14 @@ export default function transactions() {
       <View className='flex-1 gap-4 w-full px-4 '>
         <View className='w-full justify-between gap-4 flex-row' >
           <DeteSelect />
-          <CategorySelect ToggleItem={toggleItem} selectAll={selectAll} selectedCategories={selectedCategories} setSelectedCategories={setSelectedCategories} />
+          <CategorySelect
+            ToggleItem={toggleItem}
+            selectAll={selectAll}
+            removeAll={removeAll}
+            selectedCategories={selectedCategories}
+            setSelectedCategories={setSelectedCategories}
+            categorieslength={categories.length}
+          />
           <View className='flex-1 items-center bg-[#EEF0F1] rounded-full h-14 justify-center ' >
             <Text className='text-lg font-bold' >All</Text>
           </View>
@@ -60,7 +70,11 @@ export default function transactions() {
                   {
                     today.map((transaction) => {
                       return (
-                        <TransactionCard key={transaction.id} category={transaction.category} name={transaction.name} amount={transaction.amount} currency={"$"} date={transaction.date} />
+                        <TransactionCard
+                          key={transaction.id}
+                          {...transaction}
+                          currency={"$"}
+                        />
                       )
                     })
                   }
@@ -77,13 +91,28 @@ export default function transactions() {
                   {
                     yesterday.map((transaction) => {
                       return (
-                        <TransactionCard key={transaction.id} category={transaction.category} name={transaction.name} amount={transaction.amount} currency={"$"} date={transaction.date} />
+                        <TransactionCard
+                          key={transaction.id}
+                          category={transaction.category}
+                          name={transaction.name}
+                          amount={transaction.amount}
+                          currency={"$"}
+                          date={transaction.date}
+                          type='expense'
+                        />
                       )
                     })
                   }
                 </View>
 
               </View>
+            )
+          }
+          {
+            today.length == 0 && yesterday.length == 0 && lastWeek.length == 0 && (
+              <Text>
+                Add transaction
+              </Text>
             )
           }
           {
@@ -94,12 +123,19 @@ export default function transactions() {
                   {
                     lastWeek.map((transaction) => {
                       return (
-                        <TransactionCard key={transaction.id} category={transaction.category} name={transaction.name} amount={transaction.amount} currency={"$"} date={transaction.date} />
+                        <TransactionCard
+                          key={transaction.id}
+                          category={transaction.category}
+                          name={transaction.name}
+                          amount={transaction.amount}
+                          currency={"$"}
+                          date={transaction.date}
+                          type='income'
+                        />
                       )
                     })
                   }
                 </View>
-
               </View>
             )
           }
@@ -108,5 +144,3 @@ export default function transactions() {
     </View>
   )
 }
-
-

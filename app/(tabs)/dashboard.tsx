@@ -3,16 +3,18 @@ import { Link } from 'expo-router'
 import React from 'react'
 import { Image, ScrollView, Text, View } from 'react-native'
 import { PieChart, pieDataItem } from 'react-native-gifted-charts'
-import { RecentExpenses as expenses, MyExpenses } from '../../assets/expenses'
-import { splitByDateRanges } from 'app/lib/utilityFns'
+import { MyTransactions } from 'app/assets/expenses'
+import { getTopTransactionsWithCategories, splitByDateRanges } from 'app/lib/utilityFns'
 
 export default function dashboard() {
-  const chartData: pieDataItem[] = expenses.map((expense) => { return ({ value: expense.amount, tex: expense.name, ...expense }) })
-  const total = expenses.reduce((t, e) => t + e.amount, 0)
+  const { chartData } = getTopTransactionsWithCategories(MyTransactions, 4)
+
+  const total = MyTransactions.reduce((t, e) => t + e.amount, 0)
   const chartInnerRadius = 90
   const currency = '$'
-  const { today, yesterday } = splitByDateRanges<MyExpenses>(MyExpenses)
+  const { today, yesterday } = splitByDateRanges<TransactionType>(MyTransactions)
   const recentTransactions = [...today, ...yesterday]
+  const totalBalance = total
   return (
     <View className='bg-[#F6F8F6] gap-4 flex h-full items-center justify-center' >
       {/* Header */}
@@ -30,7 +32,16 @@ export default function dashboard() {
         contentContainerStyle={{ paddingBottom: 60 }}
         showsVerticalScrollIndicator={false}
       >
-        <View className='flex-1 w-full gap-4' >
+        <View className='flex-1 w-full gap-4'>
+          <View className='flex-1 shadow-md mx-4 rounded-3xl bg-white pl-5 justify-center py-8 gap-2.5 ' >
+            <Text className='text-[#4C9A66] text-xl font-semibold'>
+              Total Balance
+            </Text>
+            <Text className='text-4xl font-bold' >
+              ${totalBalance.toLocaleString()}
+            </Text>
+
+          </View>
           <View className='flex-row px-4 gap-4 ' >
             <Link style={{ flex: 1 }} href={'/addTransactions'}>
               <View style={{ width: '100%' }} className='bg-[#13EC5B] justify-center items-center py-4 px-6 rounded-full flex-1' >
@@ -70,18 +81,17 @@ export default function dashboard() {
               </View>
             </View>
             <View>
-
               {
-                expenses.map((expense) => {
+                chartData.map((data) => {
                   return (
-                    <View key={expense.id} className='items-center justify-center'>
+                    <View key={data.text} className='items-center justify-center'>
                       <View style={{ width: '50%', gap: 8 }} className=' flex-row justify-between items-center'>
                         <View style={{ width: '10%' }} className=' items-center justify-center' >
-                          <View style={{ width: 12, height: 12, backgroundColor: expense.color }} className={`rounded-full border-[${expense.color}] h-3 bg-[${expense.color}]`} ></View>
+                          <View style={{ width: 12, height: 12, backgroundColor: data.color }} className={`rounded-full border-[${data.color}] h-3 bg-[${data.color}]`} ></View>
                         </View>
-                        <View style={{ flex: 1 }} className='flex-row justify-between '>
-                          <Text>{expense.name}</Text>
-                          <Text className='font-bold' >{currency}{expense.amount}</Text>
+                        <View className='flex-1 flex-row justify-between'>
+                          <Text>{data.text}</Text>
+                          <Text className='font-bold' >{currency}{data.value}</Text>
                         </View>
                       </View>
                     </View>)

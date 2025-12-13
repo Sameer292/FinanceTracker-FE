@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import "./globals.css"
 import { HeroUINativeProvider } from 'heroui-native';
 
@@ -7,7 +7,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 export default function RootLayout() {
   return (
     <GestureHandlerRootView >
-      <SafeAreaProvider>
+      <SafeAreaProvider >
         <HeroUINativeProvider>
           <Stacks />
         </HeroUINativeProvider>
@@ -18,14 +18,17 @@ export default function RootLayout() {
 
 const Stacks = () => {
   return (
-    <Stack screenOptions={{ headerShown: false }} >
-      <Stack.Screen name='(tabs)' />
-      <Stack.Screen
-        name='addTransactions'
-        options={{
-          animation: 'slide_from_right',
-        }}
-      />
-    </Stack>
+    <SafeAreaView style={{ flex: 1 }} edges={['top']} >
+      <Stack screenOptions={{ headerShown: false }} >
+        <Stack.Screen name='login' />
+        <Stack.Screen name='(tabs)' />
+        <Stack.Screen
+          name='addTransactions'
+          options={{
+            animation: 'slide_from_right',
+          }}
+        />
+      </Stack>
+    </SafeAreaView>
   )
 }
