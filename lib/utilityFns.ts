@@ -1,6 +1,6 @@
 import { pieDataItem } from "react-native-gifted-charts";
 
-export function splitByDateRanges<T>(data: { date: string }[]): { today: T[], yesterday: T[], lastWeek: T[] } {
+export function splitByDateRanges<T extends TransactionType>(data: T[]): { today: T[], yesterday: T[], lastWeek: T[] } {
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
@@ -13,12 +13,12 @@ export function splitByDateRanges<T>(data: { date: string }[]): { today: T[], ye
     d1.getMonth() === d2.getMonth() &&
     d1.getDate() === d2.getDate();
 
-  const todayArray: any[] = [];
-  const yesterdayArray: any[] = [];
-  const lastWeekArray: any[] = [];
+  const todayArray: T[] = [];
+  const yesterdayArray: T[] = [];
+  const lastWeekArray: T[] = [];
 
   data.forEach(item => {
-    const itemDate = new Date(item.date);
+    const itemDate = new Date(item.transaction_date);
 
     if (isSameDate(itemDate, today)) {
       todayArray.push(item);
@@ -30,9 +30,9 @@ export function splitByDateRanges<T>(data: { date: string }[]): { today: T[], ye
   });
 
   return {
-    today: todayArray,
-    yesterday: yesterdayArray,
-    lastWeek: lastWeekArray
+    today: todayArray.reverse(),
+    yesterday: yesterdayArray.reverse(),
+    lastWeek: lastWeekArray.reverse()
   };
 }
 
@@ -42,21 +42,22 @@ export type TopTransactionsResult = {
 
 export function getTopTransactionsWithCategories(
   transactions: TransactionType[],
-  limit = 4
+  limit = 4,
+  categories: Category[]
 ): TopTransactionsResult {
   const expenses = transactions
-    .filter(t => t.type === 'expense')
+    .filter(t => t.transaction_type === 'expense')
     .sort((a, b) => b.amount - a.amount);
 
+  const category = categories.find(c => c.id === expenses[0].category_id);
   const top = expenses.slice(0, limit);
   const rest = expenses.slice(limit);
 
   const chartData: pieDataItem[] = top.map(tx => ({
     value: tx.amount,
-    color: tx.category.color,
-    text: tx.category.name,
-    category: tx.category,
-  }));
+    color: category?.color,
+    text: category?.name,
+  }))
 
   const othersTotal = rest.reduce((sum, tx) => sum + tx.amount, 0);
 
@@ -65,12 +66,6 @@ export function getTopTransactionsWithCategories(
       value: othersTotal,
       text: 'Others',
       color: '#64748B',
-      category: {
-        id: -1,
-        name: 'Others',
-        color: '#64748B',
-        icon: 'more-horiz',
-      },
     } as pieDataItem);
   }
 

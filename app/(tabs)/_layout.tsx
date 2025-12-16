@@ -1,14 +1,26 @@
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { Button, Text } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
+import { useAuth } from 'app/context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
+  const { authStatus } = useAuth()
+  if (authStatus === "loading") {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
+
+  if (authStatus === "unauthenticated") {
+    return <Redirect href="/login" />
+  }
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={['top']} >
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F8F6' }} edges={['top']}  >
       <AllTabs />
     </SafeAreaView>
-
   );
 }
 

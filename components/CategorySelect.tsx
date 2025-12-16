@@ -1,11 +1,17 @@
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Feather } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useQuery } from "@tanstack/react-query";
+import { getCategories } from "app/lib/ApiCalls";
 import { Dialog } from "heroui-native";
-import { Pressable, ScrollView, Text, View } from "react-native";
-import { ExpenseCategories as categories } from '../assets/expenses';
 import { useState } from "react";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
 export function CategorySelect({ selectedCategories, ToggleItem, selectAll, removeAll, categorieslength }: CategorySelectProps) {
+  const { data: categories } = useQuery<{ categories: Category[] }>(
+    {
+      queryKey: ['categories'],
+      queryFn: getCategories,
+    })
   const [isOpen, setIsOpen] = useState(false)
   const handleSelection = () => {
     if (selectedCategories.length > 0) {
@@ -45,7 +51,7 @@ export function CategorySelect({ selectedCategories, ToggleItem, selectAll, remo
 
           {/* Category list */}
           <ScrollView className="max-h-80 p-2 " contentContainerClassName='pb-4'>
-            {categories.map((category) => {
+            {categories?.categories?.map((category) => {
               const isChecked = selectedCategories.includes(category.id);
               return (
                 <Pressable

@@ -3,7 +3,7 @@ type DateRange = {
   label: string
 }
 
-type transactionTypes = 'expense' | 'income'
+type transactionTypes = 'income' | 'expense'
 
 type CategorySelectProps = {
   selectedCategories: number[],
@@ -15,12 +15,12 @@ type CategorySelectProps = {
 }
 
 type TransactionType = {
-    id: number,
-    name: string,
-    amount: number,
-    date: string,
-    category: Category
-    type: transactionTypes
+  id: number,
+  note: string,
+  amount: number,
+  transaction_date: string,
+  category_id: number,
+  transaction_type: transactionTypes
 }
 
 
@@ -33,10 +33,17 @@ type Category = {
 
 
 type TransactionCardType = {
-  name: string,
+  note: string,
   amount: number,
   currency: string,
-  date: string,
-  category?: Category,
-  type: transactionTypes
+  transaction_date: string,
+  category_id?: number,
+  transaction_type: transactionTypes
+}
+
+type User = {
+  id: number,
+  name: string,
+  email: string,
+  current_balance: number
 }
