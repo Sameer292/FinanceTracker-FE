@@ -8,14 +8,13 @@ export const TransactionCard = ({ note, amount, currency, transaction_date, cate
     queryKey: ['Categories'],
     queryFn: getCategories,
   })
-  console.log({transaction_type})
   const categories = Categories?.categories
   const category = categories?.find((c) => c.id === category_id)
   return (
     <View className='shadow-md py-4 px-4 min-h-[50] items-center bg-white rounded-3xl justify-center'>
       <View className='gap-2 flex-row justify-between w-full items-center'>
-        <View className="flex-1 flex-row gap-3 items-center">
-          <View style={{ backgroundColor: `${category?.color}40` }} className={` w-15 h-15 justify-center items-center rounded-full `} >
+        <View className="flex-1 flex-row gap-3 items-center ">
+          <View style={{ backgroundColor: `${category?.color}40`, borderRadius:'100%' }} className={`size-15 justify-center items-center`} >
             <MaterialIcons name={category?.icon as any} size={20} color={category?.color} />
           </View>
           <View style={{ gap: 4 }}>

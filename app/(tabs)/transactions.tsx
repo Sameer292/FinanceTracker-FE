@@ -1,17 +1,14 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import { useQuery } from '@tanstack/react-query'
-import { ExpenseCategories as categories } from 'app/assets/expenses'
-import { CategorySelect } from 'app/components/CategorySelect'
-import { DeteSelect } from 'app/components/DateSelect'
+import { ItemsSelect } from 'app/components/ItemsSelectSheet'
 import { TransactionCard } from 'app/components/TransactionCard'
 import { getCategories, getTransactions } from 'app/lib/ApiCalls'
 import { splitByDateRanges } from 'app/lib/utilityFns'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Link } from 'expo-router'
 import { ScrollShadow } from 'heroui-native'
-import React, { useCallback, useMemo, useState } from 'react'
-import { ScrollView, Text, View } from 'react-native'
-import { RefreshControl } from 'react-native'
+import React, { useMemo, useState } from 'react'
+import { RefreshControl, ScrollView, Text, View } from 'react-native'
 
 export default function transactions() {
   const { data: MyTransactions, isLoading, error, refetch } = useQuery<{ transactions: TransactionType[] }>({
@@ -23,25 +20,56 @@ export default function transactions() {
     queryKey: ['categories'],
     queryFn: getCategories,
   })
+  
+  
   const [selectedCategories, setSelectedCategories] = useState<number[] | null>([])
+  const [selectedTransactionTypes, setSelectedTransactionTypes] = useState<number[]>([])
+  const allTransactionTypes: { id: number; name: transactionTypes, color:string }[] = [ 
+    { id: 1, name: 'expense', color:'#EF4444' },
+    { id: 2, name: 'income', color:'#3B82F6' }, ]
 
-  const toggleItem = (Id: number) => {
+const toggleTransactionTypeItem = (id: number) => {
+  const item = allTransactionTypes.find(t => t.id === id)
+  if (!item) return
+
+  setSelectedTransactionTypes(prev =>
+    prev.some(v => v === id)
+      ? prev.filter(v => v !== id)
+      : [...prev, id]
+  )
+}
+  const toggleCategoryItem = (Id: number) => {
     setSelectedCategories((prev) =>
       prev?.includes(Id) ? prev.filter((v) => v !== Id) : [...prev!, Id]
     );
   }
-  const selectAll = () => {
-    setSelectedCategories(categories?.categories?.map((c) => c.id) ?? null);
+  const selectAll = (selectAllCategories:boolean) => {
+    if(selectAllCategories){
+      setSelectedCategories(categories?.categories?.map((c) => c.id) ?? null);
+    }else{
+      setSelectedTransactionTypes(allTransactionTypes?.map((c) => c.id) ?? null);
+    }
   }
 
-  const removeAll = () => {
-    setSelectedCategories([]);
+  const removeAll = ( removeAllCategories:boolean ) => {
+    if(removeAllCategories){
+      setSelectedCategories([]);
+    }else{
+      setSelectedTransactionTypes([]);
+    }
   }
 
-  const filteredTransactions = MyTransactions?.transactions?.filter((transaction) => {
-    if (selectedCategories?.length === 0) return true
-    return selectedCategories?.includes(transaction.category_id)
-  })
+const filteredTransactions = MyTransactions?.transactions?.filter(tx => {
+  const matchCategory =
+    selectedCategories?.length === 0 ||
+    selectedCategories?.includes(tx.category_id)
+
+  const matchType =
+    selectedTransactionTypes.length === 0 ||
+    selectedTransactionTypes.includes(tx.transaction_type === 'expense' ? 1 : 2)
+
+  return matchCategory && matchType
+})
   const { today, yesterday, lastWeek } = useMemo(() => {
     return splitByDateRanges<TransactionType>(filteredTransactions ?? [])
   }, [filteredTransactions])
@@ -56,7 +84,7 @@ export default function transactions() {
             Transactions
           </Text>
         </View>
-        <Link href={'/addTransactions'} className='absoluteRefreshControl right-5'>
+        <Link href={'/addTransactions'} className='absoluteRefreshControl'>
           <View className='bg-[#13EC5B] rounded-full'>
             <MaterialIcons size={25} style={{ fontWeight: '900' }} name="add" color="white" />
           </View>
@@ -64,19 +92,27 @@ export default function transactions() {
       </View>
       {/* Body */}
       <View className='flex-1 gap-4 w-full '>
-        <View className='w-full px-4 justify-between gap-4 flex-row' >
-          <DeteSelect />
-          <CategorySelect
-            ToggleItem={toggleItem}
-            selectAll={selectAll}
-            removeAll={removeAll}
-            selectedCategories={selectedCategories ?? []}
-            setSelectedCategories={setSelectedCategories}
-            categorieslength={categories?.categories.length ?? 0}
+        <View className='w-full px-4 justify-between h-max gap-4 flex-row '>
+          <ItemsSelect
+            ToggleItem={toggleCategoryItem}
+            selectAll={()=>selectAll(true)}
+            removeAll={()=>removeAll(true)}
+            selectedItems={selectedCategories ?? []}
+            items={categories?.categories ?? []}
+            setSelectedItems={setSelectedCategories}
+            itemslength={categories?.categories.length ?? 0}
+            title={'Categories'}
           />
-          <View className='flex-1 items-center bg-[#EEF0F1] rounded-full h-14 justify-center ' >
-            <Text className='text-lg font-bold' >All</Text>
-          </View>
+          <ItemsSelect
+            ToggleItem={toggleTransactionTypeItem}
+            selectAll={()=>selectAll(false)}
+            removeAll={()=>removeAll(false)}
+            selectedItems={selectedTransactionTypes ?? []}
+            items={allTransactionTypes ?? []}
+            setSelectedItems={setSelectedTransactionTypes}
+            itemslength={allTransactionTypes.length ?? 0}
+            title={'Types'}
+          />
         </View>
         <ScrollShadow className='flex-1' visibility='top' LinearGradientComponent={LinearGradient} color={'#565656'} size={15}>
           <ScrollView refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />} className='flex-1 p-2 px-4' showsVerticalScrollIndicator={false} contentContainerClassName='pb-8 gap-8'>

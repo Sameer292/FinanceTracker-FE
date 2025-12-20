@@ -1,17 +1,13 @@
 import { MaterialIcons } from '@expo/vector-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useAuth } from 'app/context/AuthContext'
-import apiClient from 'app/lib/api'
-import { isAxiosError } from 'axios'
-import { Link, Redirect, router } from 'expo-router'
+import { Link } from 'expo-router'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { ActivityIndicator, KeyboardAvoidingView, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
-import { toast } from 'sonner-native'
-import { set, z } from 'zod'
+import { KeyboardAvoidingView, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
+import { z } from 'zod'
 export default function login() {
-  const { setAuthStatus, authStatus, user, setUser } = useAuth()
+  const {  login } = useAuth()
 
   const loginSchema = z.object({
     email: z.email({ error: "Email is required" }),
@@ -30,32 +26,7 @@ export default function login() {
   })
 
   const onSubmit = async (loginData: loginSchemaType) => {
-    try {
-      const res = await apiClient.post('/login', loginData)
-      console.log({res})
-      if (res.status === 200 && res.data?.access_token) {
-        await AsyncStorage.setItem('accessToken', res.data.access_token)
-        await AsyncStorage.setItem('userId', String(res.data.id))
-        const data = await apiClient.get<User>('/me')
-        setAuthStatus("authenticated")
-        setUser(data.data)
-        router.replace("/(tabs)/dashboard")
-      }
-    } catch (err) {
-      if (isAxiosError(err)) {
-        toast.error('Failed logging in', {
-          duration: 2000,
-          description: err.response?.data.detail,
-          richColors: true,
-        })
-      } else {
-        toast.error('Failed logging in', {
-          duration: 2000,
-          description: 'Something went wrong',
-          richColors: true,
-        })
-      }
-    }
+    await login(loginData)
   }
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding'>

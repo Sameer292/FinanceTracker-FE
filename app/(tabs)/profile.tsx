@@ -1,13 +1,12 @@
 import { MaterialIcons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useAuth } from 'app/context/AuthContext'
-import { Link, router } from 'expo-router'
+import { Link } from 'expo-router'
 import React from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 
 export default function profile() {
   const { user: me, setAuthStatus } = useAuth()
-console.log({me})
   const logout = async () => {
     await AsyncStorage.removeItem("accessToken")
     setAuthStatus("unauthenticated")

@@ -41,18 +41,15 @@ const Stacks = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F8F6' }} edges={['top']}>
       <Stack screenOptions={{ headerShown: false }}>
-        {authStatus === "unauthenticated" ? (
-          <>
-            <Stack.Screen name='login' options={{ animation: 'slide_from_right' }} />
-            <Stack.Screen name='signup' options={{ animation: 'slide_from_right' }} />
-          </>
-        ) : (
-          <>
-            <Stack.Screen name='(tabs)' options={{ animation: 'fade_from_bottom' }} />
-            <Stack.Screen name='categories' options={{ animation: 'slide_from_right' }} />
-            <Stack.Screen name='addTransactions' options={{ animation: 'slide_from_right' }} />
-          </>
-        )}
+        <Stack.Protected guard={authStatus==='unauthenticated'} >
+          <Stack.Screen name='login' options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name='signup' options={{ animation: 'slide_from_right' }} />
+        </Stack.Protected>
+        <Stack.Protected guard={authStatus==='authenticated'}>
+          <Stack.Screen name='(tabs)' options={{ animation: 'fade_from_bottom' }} />
+          <Stack.Screen name='categories' options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name='addTransactions' options={{ animation: 'slide_from_right' }} />
+        </Stack.Protected>
       </Stack>
     </SafeAreaView>
   );

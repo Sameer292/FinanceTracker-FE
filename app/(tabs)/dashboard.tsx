@@ -1,8 +1,7 @@
-// import { MyTransactions } from 'app/assets/expenses'
 import { useQuery } from '@tanstack/react-query'
 import { TransactionCard } from 'app/components/TransactionCard'
 import { getTransactions, getCategories } from 'app/lib/ApiCalls'
-import { getTopTransactionsWithCategories, splitByDateRanges } from 'app/lib/utilityFns'
+import { getTopCategories, splitByDateRanges } from 'app/lib/utilityFns'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Link } from 'expo-router'
 import { ScrollShadow } from 'heroui-native'
@@ -22,7 +21,7 @@ export default function dashboard() {
     queryFn: getCategories,
   })
 
-  const { chartData } = getTopTransactionsWithCategories(MyTransactions?.transactions ?? [], 4, categories?.categories ?? [])
+  const { chartData, topCategories } = getTopCategories(MyTransactions?.transactions ?? [], 4, categories?.categories ?? [])
 
   const total = MyTransactions?.transactions.reduce((t, e) => t + e.amount, 0)
   const chartInnerRadius = 90
@@ -71,7 +70,7 @@ export default function dashboard() {
             <View style={{ paddingBottom: 30, paddingHorizontal: 20, elevation: 5, marginHorizontal: 16 }} className=' bg-white pt-4 gap-4  pb-10 rounded-3xl'>
               <View className='w-full'>
                 <Text className='text-3xl font-bold'>
-                  Spending this month
+                  Expenses this month
                 </Text>
               </View>
               <View className='relative justify-center items-center '>
@@ -98,10 +97,10 @@ export default function dashboard() {
                 </View>
               </View>
               <View>
-                {
+                {/* {
                   chartData.map((data) => {
                     return (
-                      <View key={data.text} className='items-center justify-center'>
+                      <View key={data.} className='items-center justify-center'>
                         <View style={{ width: '50%', gap: 8 }} className=' flex-row justify-between items-center'>
                           <View style={{ width: '10%' }} className=' items-center justify-center' >
                             <View style={{ width: 12, height: 12, backgroundColor: data.color }} className={`rounded-full border-[${data.color}] h-3 bg-[${data.color}]`} ></View>
@@ -113,7 +112,7 @@ export default function dashboard() {
                         </View>
                       </View>)
                   })
-                }
+                } */}
               </View>
             </View>
             <View style={{ gap: 10 }} className='px-4'>

@@ -1,5 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons'
-import { router } from 'expo-router'
+import { useRouter } from 'expo-router'
 import React from 'react'
 import { FlatList, Pressable, Text, View } from 'react-native'
 import { useQuery } from '@tanstack/react-query'
@@ -10,7 +10,10 @@ export default function categories() {
         queryKey: ['categories'],
         queryFn: getCategories,
     })
-    console.log(Categories?.categories)
+    const router = useRouter()
+    const handleClick = (id:number) => {
+        router.push(`/byCategories/${id}`)
+    }
     return (
         <View className='flex-1 bg-[#F6F8F6] gap-8'>
             {/* Header */}
@@ -53,7 +56,7 @@ export default function categories() {
                             contentContainerClassName='px-4 gap-4'
                             bounces
                             renderItem={({ item }) => (
-                                <View className='h-20 justify-center bg-white shadow-[0_3px_5px_rgb(0,0,0,0.1)] items-center gap-4 flex-row px-4 py-2 rounded-2xl'>
+                                <Pressable onPress={() => handleClick(item.id)} className='h-20 justify-center bg-white shadow-[0_3px_5px_rgb(0,0,0,0.1)] items-center gap-4 flex-row px-4 py-2 rounded-2xl'>
                                     <View
                                         style={{ backgroundColor: `${item.color}40` }}
                                         className='rounded-full justify-center items-center size-14'
@@ -71,7 +74,7 @@ export default function categories() {
                                         </Text>
                                         <MaterialIcons name='chevron-right' color='#6B7280' size={25} />
                                     </View>
-                                </View>
+                                </Pressable>
                             )}
                         />
                     )

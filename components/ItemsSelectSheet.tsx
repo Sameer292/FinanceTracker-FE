@@ -1,35 +1,29 @@
 import { Feather } from "@expo/vector-icons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useQuery } from "@tanstack/react-query";
-import { getCategories } from "app/lib/ApiCalls";
 import { Dialog } from "heroui-native";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
-export function CategorySelect({ selectedCategories, ToggleItem, selectAll, removeAll, categorieslength }: CategorySelectProps) {
-  const { data: categories } = useQuery<{ categories: Category[] }>(
-    {
-      queryKey: ['categories'],
-      queryFn: getCategories,
-    })
+export function ItemsSelect({items ,selectedItems, setSelectedItems, ToggleItem, selectAll, removeAll, itemslength, title }: CategorySelectProps) {
+
   const [isOpen, setIsOpen] = useState(false)
   const handleSelection = () => {
-    if (selectedCategories.length > 0) {
+    if (selectedItems.length > 0) {
       removeAll()
-    } else if (selectedCategories.length === 0) {
+    } else if (selectedItems.length === 0) {
       selectAll()
     }
   }
   return (
-    <Dialog className='flex-1'>
-      <Dialog.Trigger onPress={() => setIsOpen(true)} className={`${(isOpen || selectedCategories.length) ? 'bg-[#C8F5D6]' : 'bg-[#EEF0F1]'} flex-1 items-center rounded-full`}>
+    <Dialog className='flex-1 h-14'>
+      <Dialog.Trigger onPress={() => setIsOpen(true)} className={`${(isOpen || selectedItems.length) ? 'bg-[#C8F5D6]' : 'bg-[#EEF0F1]'} flex-1 items-center rounded-full`}>
         <View className='flex-1 w-full items-center flex-row rounded-full h-14 justify-between px-6 ' >
-          <Text className={`${(isOpen || selectedCategories.length) ? 'text-[#15c34f]' : ''} text-lg font-bold `} >Categories</Text>
+          <Text className={`${(isOpen || selectedItems?.length) ? 'text-[#15c34f]' : ''} text-lg font-bold `}>{title}</Text>
           {
             isOpen ? (
               <Feather name={'chevron-up'} color={'#15c34f'} size={20} />
             ) : (
-              <Feather name={'chevron-down'} color={`${selectedCategories.length && '#15c34f'}`} size={20} />
+              <Feather name={'chevron-down'} color={`${selectedItems.length && '#15c34f'}`} size={20} />
             )
           }
         </View>
@@ -41,35 +35,37 @@ export function CategorySelect({ selectedCategories, ToggleItem, selectAll, remo
           {/* Header */}
           <View className="flex-row items-center justify-between border-b border-[#F3F4F6] px-4 py-3">
             <Text className="text-md font-bold uppercase tracking-wider text-gray-500">
-              Select Categories
+              Select {title}
             </Text>
 
             <Pressable onPress={handleSelection}>
-              <Text className="text-md font-medium text-[#15c34f]">{(selectedCategories.length > 0) ? 'Deselect All' : 'Select All'}</Text>
+              <Text className="text-md font-medium text-[#15c34f]">{(selectedItems.length > 0) ? 'Deselect All' : 'Select All'}</Text>
             </Pressable>
           </View>
 
           {/* Category list */}
           <ScrollView className="max-h-80 p-2 " contentContainerClassName='pb-4'>
-            {categories?.categories?.map((category) => {
-              const isChecked = selectedCategories.includes(category.id);
+            {items?.map((item) => {
+              const isChecked = selectedItems.includes(item.id);
               return (
                 <Pressable
-                  key={category.id}
-                  onPress={() => ToggleItem(category.id)}
+                  key={item.id}
+                  onPress={() => ToggleItem(item.id)}
                   className="flex-row items-center gap-3 rounded-xl p-2"
                 >
                   {/* Icon bubble */}
+                  {
+                    item.icon && 
                   <View
-                    style={{ backgroundColor: `${category.color}20` }}
+                    style={{ backgroundColor: `${item.color}20` }}
                     className="size-11 rounded-full items-center justify-center"
                   >
-                    <MaterialIcons name={category.icon as any} size={20} color={category.color} />
+                    <MaterialIcons name={item.icon as any} size={20} color={item.color} />
                   </View>
-
+                  }
                   {/* Label */}
-                  <Text className="flex-1 text-md font-semibold text-gray-700">
-                    {category.name}
+                  <Text className="flex-1 text-md capitalize font-semibold text-gray-700">
+                    {item.name}
                   </Text>
 
                   {/* Checkbox */}
@@ -88,8 +84,8 @@ export function CategorySelect({ selectedCategories, ToggleItem, selectAll, remo
 
 
           {/* Might be needed later */}
-          {/* Footer
-          <View className="border-t border-gray-200 p-3">
+          {/* Footer */}
+          {/* <View className="border-t border-gray-200 p-3">
             <Dialog.Close asChild>
               <Pressable
                 // onPress={() => dialog.onOpenChange(false)}

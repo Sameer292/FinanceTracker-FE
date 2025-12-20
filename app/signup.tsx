@@ -1,14 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import apiClient from 'app/lib/api'
-import { isAxiosError } from 'axios'
-import { Link, router } from 'expo-router'
+import { useAuth } from 'app/context/AuthContext'
+import { Link } from 'expo-router'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { KeyboardAvoidingView, Pressable, Text, TextInput, View } from 'react-native'
-import { toast } from 'sonner-native'
 import z from 'zod'
 
 export default function signup() {
+  const { register } = useAuth()
   const registerSchema = z.object({
     name: z.string().min(1, { error: "Name is required" }),
     email: z.email({ error: "Email is required" }),
@@ -31,32 +30,7 @@ export default function signup() {
   })
   const onSubmit = async (data: registerSchemaType) => {
     const { confirmPassword, ...properData } = data
-    try {
-      const res = await apiClient.post('/register', properData)
-      if (res.status === 200) {
-        toast.success('Signup successful', {
-          duration: 2000,
-          description: res.data.message,
-          richColors: true,
-        })
-        router.push('/login')
-      }
-    } catch (err) {
-      if (isAxiosError(err)) {
-        toast.error('Signup failed', {
-          duration: 2000,
-          description: err.response?.data.detail,
-          richColors: true,
-        })
-      } else {
-        toast.error('Signup failed', {
-          duration: 2000,
-          description: 'Something went wrong',
-          richColors: true,
-        })
-      }
-    }
-
+    register(properData)
   }
 
   return (

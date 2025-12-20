@@ -32,7 +32,8 @@ const AllTabs = () => {
         tabBarStyle: {
           paddingTop: 10,
           backgroundColor: '#F6F8F6',
-        }
+        },
+        headerShown: false
       }}
     >
       <Tabs.Screen
@@ -41,7 +42,6 @@ const AllTabs = () => {
           title: 'Dashboard',
           tabBarIcon: ({ focused }) => <MaterialIcons size={25} name="dashboard" color={focused ? "#13EC5B" : "#4C9A66"} />,
           tabBarLabel: ({ focused }) => <Text style={{ color: focused ? "#13EC5B" : "#4C9A66", fontSize: 14, fontWeight: focused ? "bold" : 'semibold' }} >Dashboard</Text>,
-          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -50,7 +50,6 @@ const AllTabs = () => {
           title: 'transactions',
           tabBarIcon: ({ focused }) => <MaterialIcons size={25} name="receipt-long" color={focused ? "#13EC5B" : "#4C9A66"} />,
           tabBarLabel: ({ focused }) => <Text style={{ color: focused ? "#13EC5B" : "#4C9A66", fontSize: 12, fontWeight: focused ? 'bold' : 'semibold' }}>Transactions</Text>,
-          headerShown: false
         }}
       />
       <Tabs.Screen
@@ -59,7 +58,6 @@ const AllTabs = () => {
           title: 'budgets',
           tabBarIcon: ({ focused }) => <MaterialIcons size={25} name="pie-chart" color={focused ? "#13EC5B" : "#4C9A66"} />,
           tabBarLabel: ({ focused }) => <Text style={{ color: focused ? "#13EC5B" : "#4C9A66", fontSize: 12, fontWeight: focused ? 'bold' : 'semibold' }}>Budgets</Text>,
-          headerShown: false
         }}
       />
       <Tabs.Screen
@@ -68,7 +66,6 @@ const AllTabs = () => {
           title: 'profile',
           tabBarIcon: ({ focused }) => <MaterialIcons size={25} name="person" color={focused ? "#13EC5B" : "#4C9A66"} />,
           tabBarLabel: ({ focused }) => <Text style={{ color: focused ? "#13EC5B" : "#4C9A66", fontSize: 12, fontWeight: focused ? 'bold' : 'semibold' }}>Profile</Text>,
-          headerShown: false
         }}
       />
     </Tabs>

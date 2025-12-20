@@ -6,12 +6,19 @@ type DateRange = {
 type transactionTypes = 'income' | 'expense'
 
 type CategorySelectProps = {
-  selectedCategories: number[],
-  setSelectedCategories: (selected: number[]) => void,
-  ToggleItem: (Id: number) => void,
+  selectedItems: number[],
+  setSelectedItems: (selected: number[]) => void,
+  ToggleItem: (Id: number ) => void,
   selectAll: () => void
   removeAll: () => void
-  categorieslength: number
+  itemslength: number
+  items:{
+    id: number,
+    name: string,
+    color: string,
+    icon?: string
+  }[]
+  title:string
 }
 
 type TransactionType = {
@@ -46,4 +53,15 @@ type User = {
   name: string,
   email: string,
   current_balance: number
+}
+
+type LoginInput = {
+  email: string,
+  password: string
+}
+
+type RegisterInput = {
+  name: string,
+  email: string,
+  password: string
 }

@@ -35,39 +35,62 @@ export function splitByDateRanges<T extends TransactionType>(data: T[]): { today
     lastWeek: lastWeekArray.reverse()
   };
 }
-
-export type TopTransactionsResult = {
-  chartData: pieDataItem[]
+type TopTransactionsResult = {
+  chartData: pieDataItem[];
+  topCategories: Category[];
 };
-
-export function getTopTransactionsWithCategories(
+export function getTopCategories(
   transactions: TransactionType[],
   limit = 4,
   categories: Category[]
 ): TopTransactionsResult {
-  const expenses = transactions
-    .filter(t => t.transaction_type === 'expense')
-    .sort((a, b) => b.amount - a.amount);
 
-  const category = categories.find(c => c.id === expenses[0].category_id);
-  const top = expenses.slice(0, limit);
-  const rest = expenses.slice(limit);
+  const expenseTotals: Record<number, number> = {}
 
-  const chartData: pieDataItem[] = top.map(tx => ({
-    value: tx.amount,
-    color: category?.color,
-    text: category?.name,
+  // sum by category
+  transactions.forEach(tx => {
+    if (tx.transaction_type === "expense") {
+      expenseTotals[tx.category_id] =
+        (expenseTotals[tx.category_id] || 0) + tx.amount
+    }
+  })
+
+  // convert to array
+  const categoryTotals = Object.entries(expenseTotals).map(([catId, amount]) => ({
+    categoryId: Number(catId),
+    amount,
   }))
 
-  const othersTotal = rest.reduce((sum, tx) => sum + tx.amount, 0);
+  // sort desc
+  categoryTotals.sort((a, b) => b.amount - a.amount)
+
+  const top = categoryTotals.slice(0, limit)
+  const rest = categoryTotals.slice(limit)
+
+  const chartData: pieDataItem[] = top.map(item => {
+    const cat = categories.find(c => c.id === item.categoryId)
+
+    return {
+      value: item.amount,
+      text: cat?.name ?? 'Unknown',
+      color: cat?.color ?? '#999',
+      category: cat,
+    } as pieDataItem
+  })
+
+  const othersTotal = rest.reduce((s, x) => s + x.amount, 0)
 
   if (othersTotal > 0) {
     chartData.push({
       value: othersTotal,
-      text: 'Others',
-      color: '#64748B',
-    } as pieDataItem);
+      text: "Others",
+      color: "#64748B",
+    })
   }
 
-  return { chartData };
+  const topCategories = top.map(t =>
+    categories.find(c => c.id === t.categoryId) as Category
+  )
+
+  return { chartData, topCategories }
 }
