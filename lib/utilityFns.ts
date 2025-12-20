@@ -1,6 +1,6 @@
 import { pieDataItem } from "react-native-gifted-charts";
 
-export function splitByDateRanges<T>(data: { date: string }[]): { today: T[], yesterday: T[], lastWeek: T[] } {
+export function splitByDateRanges<T extends TransactionType>(data: T[]): { today: T[], yesterday: T[], lastWeek: T[] } {
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
@@ -13,12 +13,12 @@ export function splitByDateRanges<T>(data: { date: string }[]): { today: T[], ye
     d1.getMonth() === d2.getMonth() &&
     d1.getDate() === d2.getDate();
 
-  const todayArray: any[] = [];
-  const yesterdayArray: any[] = [];
-  const lastWeekArray: any[] = [];
+  const todayArray: T[] = [];
+  const yesterdayArray: T[] = [];
+  const lastWeekArray: T[] = [];
 
   data.forEach(item => {
-    const itemDate = new Date(item.date);
+    const itemDate = new Date(item.transaction_date);
 
     if (isSameDate(itemDate, today)) {
       todayArray.push(item);
@@ -30,49 +30,67 @@ export function splitByDateRanges<T>(data: { date: string }[]): { today: T[], ye
   });
 
   return {
-    today: todayArray,
-    yesterday: yesterdayArray,
-    lastWeek: lastWeekArray
+    today: todayArray.reverse(),
+    yesterday: yesterdayArray.reverse(),
+    lastWeek: lastWeekArray.reverse()
   };
 }
-
-export type TopTransactionsResult = {
-  chartData: pieDataItem[]
+type TopTransactionsResult = {
+  chartData: pieDataItem[];
+  topCategories: Category[];
 };
-
-export function getTopTransactionsWithCategories(
+export function getTopCategories(
   transactions: TransactionType[],
-  limit = 4
+  limit = 4,
+  categories: Category[]
 ): TopTransactionsResult {
-  const expenses = transactions
-    .filter(t => t.type === 'expense')
-    .sort((a, b) => b.amount - a.amount);
 
-  const top = expenses.slice(0, limit);
-  const rest = expenses.slice(limit);
+  const expenseTotals: Record<number, number> = {}
 
-  const chartData: pieDataItem[] = top.map(tx => ({
-    value: tx.amount,
-    color: tx.category.color,
-    text: tx.category.name,
-    category: tx.category,
-  }));
+  // sum by category
+  transactions.forEach(tx => {
+    if (tx.transaction_type === "expense") {
+      expenseTotals[tx.category_id] =
+        (expenseTotals[tx.category_id] || 0) + tx.amount
+    }
+  })
 
-  const othersTotal = rest.reduce((sum, tx) => sum + tx.amount, 0);
+  // convert to array
+  const categoryTotals = Object.entries(expenseTotals).map(([catId, amount]) => ({
+    categoryId: Number(catId),
+    amount,
+  }))
+
+  // sort desc
+  categoryTotals.sort((a, b) => b.amount - a.amount)
+
+  const top = categoryTotals.slice(0, limit)
+  const rest = categoryTotals.slice(limit)
+
+  const chartData: pieDataItem[] = top.map(item => {
+    const cat = categories.find(c => c.id === item.categoryId)
+
+    return {
+      value: item.amount,
+      text: cat?.name ?? 'Unknown',
+      color: cat?.color ?? '#999',
+      category: cat,
+    } as pieDataItem
+  })
+
+  const othersTotal = rest.reduce((s, x) => s + x.amount, 0)
 
   if (othersTotal > 0) {
     chartData.push({
       value: othersTotal,
-      text: 'Others',
-      color: '#64748B',
-      category: {
-        id: -1,
-        name: 'Others',
-        color: '#64748B',
-        icon: 'more-horiz',
-      },
-    } as pieDataItem);
+      text: "Others",
+      color: "#64748B",
+    })
   }
 
-  return { chartData };
+  const topCategories = top.map(t =>
+    categories.find(c => c.id === t.categoryId) as Category
+  )
+
+  return { chartData, topCategories }
 }

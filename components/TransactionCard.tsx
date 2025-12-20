@@ -1,24 +1,32 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons"
+import { useQuery } from "@tanstack/react-query"
+import { getCategories } from "app/lib/ApiCalls"
 import { View, Text } from "react-native"
 
-export const TransactionCard = ({ name, amount, currency, date, category, type }: TransactionCardType) => {
+export const TransactionCard = ({ note, amount, currency, transaction_date, category_id, transaction_type }: TransactionCardType) => {
+  const {data:Categories} = useQuery<{ categories: Category[] }>({
+    queryKey: ['Categories'],
+    queryFn: getCategories,
+  })
+  const categories = Categories?.categories
+  const category = categories?.find((c) => c.id === category_id)
   return (
     <View className='shadow-md py-4 px-4 min-h-[50] items-center bg-white rounded-3xl justify-center'>
       <View className='gap-2 flex-row justify-between w-full items-center'>
-        <View className="flex-1 flex-row gap-3 items-center">
-          <View style={{ backgroundColor: `${category?.color}40` }} className={` w-15 h-15 justify-center items-center rounded-full `} >
+        <View className="flex-1 flex-row gap-3 items-center ">
+          <View style={{ backgroundColor: `${category?.color}40`, borderRadius:'100%' }} className={`size-15 justify-center items-center`} >
             <MaterialIcons name={category?.icon as any} size={20} color={category?.color} />
           </View>
           <View style={{ gap: 4 }}>
-            <Text className='text-xl font-bold'>{name}</Text>
+            <Text className='text-xl font-bold'>{note}</Text>
 
             <View className="flex-row gap-3 items-center">
-              {date && (
+              {transaction_date && (
                 <Text
                   style={{ fontSize: 14 }}
                   className="text-gray-500"
                 >
-                  {new Date(date).toDateString().slice(4)}
+                  {new Date(transaction_date).toDateString().slice(4)}
                 </Text>
               )}
 
@@ -37,8 +45,8 @@ export const TransactionCard = ({ name, amount, currency, date, category, type }
         </View>
         <View  >
           <Text
-            className={` ${type == 'expense' ? 'text-[#EC1345]' : 'text-[#1DB954]'} text-xl font-bold text-right`}>
-            {type === 'income' ? '+' : '-'}{currency}{amount}
+            className={` ${transaction_type === 'income' ? 'text-[#1DB954]' : 'text-[#EC1345]'} text-xl font-bold text-right`}>
+            {transaction_type === 'income' ? '+' : '-'}{currency}{amount}
           </Text>
         </View>
       </View>
