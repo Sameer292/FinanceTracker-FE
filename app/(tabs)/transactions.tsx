@@ -2,74 +2,56 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import { useQuery } from '@tanstack/react-query'
 import { ItemsSelect } from 'app/components/ItemsSelectSheet'
 import { TransactionCard } from 'app/components/TransactionCard'
+import { TransactionTypeSelect } from 'app/components/TransactionTypeSelect'
 import { getCategories, getTransactions } from 'app/lib/ApiCalls'
 import { splitByDateRanges } from 'app/lib/utilityFns'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Link } from 'expo-router'
+import { Link, useFocusEffect } from 'expo-router'
 import { ScrollShadow } from 'heroui-native'
 import React, { useMemo, useState } from 'react'
 import { RefreshControl, ScrollView, Text, View } from 'react-native'
 
 export default function transactions() {
-  const { data: MyTransactions, isLoading, error, refetch } = useQuery<{ transactions: TransactionType[] }>({
+  const { data: MyTransactions, isLoading, refetch } = useQuery<{ transactions: TransactionType[] }>({
     queryKey: ['transactions'],
-    queryFn: getTransactions,
-    refetchInterval: 5000
+    queryFn: getTransactions
   })
-  const { data: categories, isLoading: isCategoryLoading, error: categoryError } = useQuery<{ categories: Category[] }>({
+  const { data: categories, isLoading: isCategoryLoading } = useQuery<{ categories: Category[] }>({
     queryKey: ['categories'],
     queryFn: getCategories,
   })
-  
-  
-  const [selectedCategories, setSelectedCategories] = useState<number[] | null>([])
-  const [selectedTransactionTypes, setSelectedTransactionTypes] = useState<number[]>([])
-  const allTransactionTypes: { id: number; name: transactionTypes, color:string }[] = [ 
-    { id: 1, name: 'expense', color:'#EF4444' },
-    { id: 2, name: 'income', color:'#3B82F6' }, ]
-
-const toggleTransactionTypeItem = (id: number) => {
-  const item = allTransactionTypes.find(t => t.id === id)
-  if (!item) return
-
-  setSelectedTransactionTypes(prev =>
-    prev.some(v => v === id)
-      ? prev.filter(v => v !== id)
-      : [...prev, id]
+console.log(MyTransactions?.transactions)
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch()
+    }, [refetch]),
   )
-}
+  const [transactionType, setTransactionType] = useState<TransactionTypeSelect>()
+  const [selectedCategories, setSelectedCategories] = useState<number[] | null>([])
+
   const toggleCategoryItem = (Id: number) => {
     setSelectedCategories((prev) =>
       prev?.includes(Id) ? prev.filter((v) => v !== Id) : [...prev!, Id]
     );
   }
-  const selectAll = (selectAllCategories:boolean) => {
-    if(selectAllCategories){
-      setSelectedCategories(categories?.categories?.map((c) => c.id) ?? null);
-    }else{
-      setSelectedTransactionTypes(allTransactionTypes?.map((c) => c.id) ?? null);
-    }
+  const selectAll = () => {
+    setSelectedCategories(categories?.categories?.map((c) => c.id) ?? null);
   }
 
-  const removeAll = ( removeAllCategories:boolean ) => {
-    if(removeAllCategories){
-      setSelectedCategories([]);
-    }else{
-      setSelectedTransactionTypes([]);
-    }
+  const removeAll = () => {
+    setSelectedCategories([]);
   }
 
-const filteredTransactions = MyTransactions?.transactions?.filter(tx => {
-  const matchCategory =
-    selectedCategories?.length === 0 ||
-    selectedCategories?.includes(tx.category_id)
+  const filteredTransactions = MyTransactions?.transactions?.filter(tx => {
+    const matchCategory =
+      selectedCategories?.length === 0 ||
+      selectedCategories?.includes(tx.category_id)
 
-  const matchType =
-    selectedTransactionTypes.length === 0 ||
-    selectedTransactionTypes.includes(tx.transaction_type === 'expense' ? 1 : 2)
+    const matchType =
+      !transactionType || transactionType.value === 'all' || tx.transaction_type === transactionType.value
 
-  return matchCategory && matchType
-})
+    return matchCategory && matchType
+  })
   const { today, yesterday, lastWeek } = useMemo(() => {
     return splitByDateRanges<TransactionType>(filteredTransactions ?? [])
   }, [filteredTransactions])
@@ -95,26 +77,20 @@ const filteredTransactions = MyTransactions?.transactions?.filter(tx => {
         <View className='w-full px-4 justify-between h-max gap-4 flex-row '>
           <ItemsSelect
             ToggleItem={toggleCategoryItem}
-            selectAll={()=>selectAll(true)}
-            removeAll={()=>removeAll(true)}
+            selectAll={selectAll}
+            removeAll={removeAll}
             selectedItems={selectedCategories ?? []}
             items={categories?.categories ?? []}
             setSelectedItems={setSelectedCategories}
             itemslength={categories?.categories.length ?? 0}
             title={'Categories'}
           />
-          <ItemsSelect
-            ToggleItem={toggleTransactionTypeItem}
-            selectAll={()=>selectAll(false)}
-            removeAll={()=>removeAll(false)}
-            selectedItems={selectedTransactionTypes ?? []}
-            items={allTransactionTypes ?? []}
-            setSelectedItems={setSelectedTransactionTypes}
-            itemslength={allTransactionTypes.length ?? 0}
-            title={'Types'}
+          <TransactionTypeSelect
+            setTransactionType={setTransactionType}
+            transactionType={transactionType}
           />
         </View>
-        <ScrollShadow className='flex-1' visibility='top' LinearGradientComponent={LinearGradient} color={'#565656'} size={15}>
+        <ScrollShadow className='flex-1' visibility='top' LinearGradientComponent={LinearGradient} color={'#949292'} size={15}>
           <ScrollView refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />} className='flex-1 p-2 px-4' showsVerticalScrollIndicator={false} contentContainerClassName='pb-8 gap-8'>
             {
               today.length > 0 && (

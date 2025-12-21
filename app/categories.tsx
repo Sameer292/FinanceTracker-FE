@@ -20,13 +20,6 @@ export default function categories() {
             <View className='border-b mt-2 border-b-[#d6d7d8] pb-4 px-4 justify-center items-center flex'>
                 <View className='relative w-full items-center'>
                     <Text className='text-2xl font-semibold'>Categories</Text>
-
-                    <Pressable className='absolute right-0 '>
-                        <Text className='font-semibold text-xl text-[#13EC5B]'>
-                            Edit
-                        </Text>
-                    </Pressable>
-
                     <Pressable className='absolute left-0' onPress={() => router.back()}>
                         <Text className='font-semibold text-xl text-[#13EC5B]'>
                             <MaterialIcons name={'chevron-left'} size={35} color={'#000'} />

@@ -1,6 +1,9 @@
-type DateRange = {
+type TransactionTypeSelect = {
   value: string,
-  label: string
+  label: string,
+  icon?: string,
+  textColor?: string,
+  bgColor?: string
 }
 
 type transactionTypes = 'income' | 'expense'

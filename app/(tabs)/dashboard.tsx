@@ -1,24 +1,28 @@
 import { useQuery } from '@tanstack/react-query'
 import { TransactionCard } from 'app/components/TransactionCard'
-import { getTransactions, getCategories } from 'app/lib/ApiCalls'
+import { getTransactions, getCategories, getRecentTransactions } from 'app/lib/ApiCalls'
 import { getTopCategories, splitByDateRanges } from 'app/lib/utilityFns'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Link } from 'expo-router'
 import { ScrollShadow } from 'heroui-native'
 import React from 'react'
-import { Image, ScrollView, Text, View } from 'react-native'
-import { PieChart } from 'react-native-gifted-charts'
+import { FlatList, Image, ScrollView, Text, View } from 'react-native'
+import { PieChart, pieDataItem } from 'react-native-gifted-charts'
+import PagerView from 'react-native-pager-view';
 
 export default function dashboard() {
 
-    const { data: MyTransactions, isLoading, error, refetch } = useQuery<{ transactions: TransactionType[] }>({
+  const { data: MyTransactions, isLoading, error, refetch } = useQuery<{ transactions: TransactionType[] }>({
     queryKey: ['transactions'],
-    queryFn: getTransactions,
-    refetchInterval: 5000
+    queryFn: getTransactions
   })
   const { data: categories, isLoading: isCategoryLoading, error: categoryError } = useQuery<{ categories: Category[] }>({
     queryKey: ['categories'],
     queryFn: getCategories,
+  })
+  const { data: latestTransactions } = useQuery<{ transactions: TransactionType[] }>({
+    queryKey: ['recentTransactions'],
+    queryFn: getRecentTransactions
   })
 
   const { chartData, topCategories } = getTopCategories(MyTransactions?.transactions ?? [], 4, categories?.categories ?? [])
@@ -67,7 +71,66 @@ export default function dashboard() {
                 </View>
               </Link>
             </View>
-            <View style={{ paddingBottom: 30, paddingHorizontal: 20, elevation: 5, marginHorizontal: 16 }} className=' bg-white pt-4 gap-4  pb-10 rounded-3xl'>
+            <PagerView style={{ height: 350, borderWidth:2, elevation: 5}} className='shadow-2xl' initialPage={0}>
+
+              <View style={{ elevation: 5 }} className='mx-4 mb-3 px-5 pb-10 bg-white pt-4 gap-4 rounded-3xl'>
+                <View className='w-full'>
+                  <Text className='text-3xl font-bold'>
+                    Expenses this month
+                  </Text>
+                </View>
+                <View className='relative justify-center items-center '>
+                  <View >
+                    {/* <PagerView className='flex-1 border-2' initialPage={0}> */}
+                    {/* <PieChart
+                      key={0}
+                      donut
+                      innerRadius={chartInnerRadius}
+                      data={chartData}
+                    /> */}
+                    <PieChart
+                      key={1}
+                      donut
+                      innerRadius={chartInnerRadius}
+                      data={chartData}
+                    />
+                    {/* </PagerView> */}
+                    <View
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        bottom: 0,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Text className='text-2xl text-[#4c9166]'>Total</Text>
+                      <Text className='text-4xl font-bold'> {currency}{total?.toLocaleString()}</Text>
+                    </View>
+                  </View>
+                </View>
+                <View>
+                  {/* {
+                  chartData.map((data) => {
+                    return (
+                      <View key={data.} className='items-center justify-center'>
+                        <View style={{ width: '50%', gap: 8 }} className=' flex-row justify-between items-center'>
+                          <View style={{ width: '10%' }} className=' items-center justify-center' >
+                            <View style={{ width: 12, height: 12, backgroundColor: data.color }} className={`rounded-full border-[${data.color}] h-3 bg-[${data.color}]`} ></View>
+                          </View>
+                          <View className='flex-1 flex-row justify-between'>
+                            <Text>{data.text}</Text>
+                            <Text className='font-bold' >{currency}{data.value}</Text>
+                          </View>
+                        </View>
+                      </View>)
+                  })
+                } */}
+                </View>
+              </View>
+              <View style={{ elevation: 5 }} className='mx-4 mb-3 px-5 pb-10 bg-white pt-4 gap-4 rounded-3xl'>
               <View className='w-full'>
                 <Text className='text-3xl font-bold'>
                   Expenses this month
@@ -76,6 +139,7 @@ export default function dashboard() {
               <View className='relative justify-center items-center '>
                 <View >
                   <PieChart
+                                        key={1}
                     donut
                     innerRadius={chartInnerRadius}
                     data={chartData}
@@ -115,11 +179,12 @@ export default function dashboard() {
                 } */}
               </View>
             </View>
+            </PagerView>
             <View style={{ gap: 10 }} className='px-4'>
               <Text className='text-3xl font-bold'>Recent Transactions</Text>
               <View style={{ gap: 12 }}>
                 {
-                  recentTransactions.map((expense) => {
+                  latestTransactions?.transactions.map((expense) => {
                     return (
                       <TransactionCard key={expense.id} {...expense} currency={currency} />
                     )

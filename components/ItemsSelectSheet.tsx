@@ -3,8 +3,9 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Dialog } from "heroui-native";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
+import { BlurView } from 'expo-blur';
 
-export function ItemsSelect({items ,selectedItems, setSelectedItems, ToggleItem, selectAll, removeAll, itemslength, title }: CategorySelectProps) {
+export function ItemsSelect({ items, selectedItems, setSelectedItems, ToggleItem, selectAll, removeAll, itemslength, title }: CategorySelectProps) {
 
   const [isOpen, setIsOpen] = useState(false)
   const handleSelection = () => {
@@ -15,6 +16,7 @@ export function ItemsSelect({items ,selectedItems, setSelectedItems, ToggleItem,
     }
   }
   return (
+    <>
     <Dialog className='flex-1 h-14'>
       <Dialog.Trigger onPress={() => setIsOpen(true)} className={`${(isOpen || selectedItems.length) ? 'bg-[#C8F5D6]' : 'bg-[#EEF0F1]'} flex-1 items-center rounded-full`}>
         <View className='flex-1 w-full items-center flex-row rounded-full h-14 justify-between px-6 ' >
@@ -29,6 +31,19 @@ export function ItemsSelect({items ,selectedItems, setSelectedItems, ToggleItem,
         </View>
       </Dialog.Trigger>
       <Dialog.Portal className='px-4 -mt-90 '>
+            {isOpen && (
+              <BlurView
+                intensity={100}
+                tint="default"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                }}
+              />
+            )}
         <Dialog.Overlay onPress={() => setIsOpen(false)} />
         <Dialog.Content isSwipeable={false} className="border border-[#F3F4F6] rounded-2xl bg-white shadow-[1px_1px_25px_5px_rgba(0,0,0,0.29)]">
 
@@ -98,5 +113,6 @@ export function ItemsSelect({items ,selectedItems, setSelectedItems, ToggleItem,
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog>
+    </>
   );
 }

@@ -2,14 +2,12 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import { Dialog } from 'heroui-native'
 import React from 'react'
-import { Pressable, ScrollView, Text, TextInput, View, StyleSheet, KeyboardAvoidingView } from 'react-native'
-// import { ExpenseCategories as categories } from '../assets/expenses';
+import { Pressable, ScrollView, Text, TextInput, View, KeyboardAvoidingView } from 'react-native'
 import { DatePickerModal } from 'react-native-paper-dates';
 import apiClient from 'app/lib/api'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery,  } from '@tanstack/react-query'
 import { getCategories } from 'app/lib/ApiCalls'
 import { toast } from 'sonner-native'
-// import categories from './categories'
 
 export default function transactions() {
   const [selectedType, setSelectedType] = React.useState<'expense' | 'income'>('expense')

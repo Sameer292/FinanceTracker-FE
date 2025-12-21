@@ -46,8 +46,9 @@ const Stacks = () => {
           <Stack.Screen name='signup' options={{ animation: 'slide_from_right' }} />
         </Stack.Protected>
         <Stack.Protected guard={authStatus==='authenticated'}>
-          <Stack.Screen name='(tabs)' options={{ animation: 'fade_from_bottom' }} />
+          <Stack.Screen name='(tabs)' options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name='categories' options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name='byCategories/[id]' options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name='addTransactions' options={{ animation: 'slide_from_right' }} />
         </Stack.Protected>
       </Stack>

@@ -9,3 +9,18 @@ export const getTransactions = async () => {
     const res = await apiClient.get("/transactions");
     return res.data;
 };
+
+export const getTransactionsByCategory = async (categoryId: number) => {
+    const res = await apiClient.get(`/category/${categoryId}/transactions`);
+    return res.data;
+}
+
+export const getCategoryById = async (categoryId: number) => {
+    const res = await apiClient.get(`/category/${categoryId}`);
+    return res.data;
+}
+
+export const getRecentTransactions = async () => {
+    const res = await apiClient.get('/transactions/recent');
+    return res.data
+}
