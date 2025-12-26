@@ -20,7 +20,6 @@ export default function transactions() {
     queryKey: ['categories'],
     queryFn: getCategories,
   })
-console.log(MyTransactions?.transactions)
   useFocusEffect(
     React.useCallback(() => {
       refetch()

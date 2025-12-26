@@ -73,9 +73,9 @@ export default function categories() {
                     )
                 }
             </View>
-            <View className='size-20 shadow-[0_3px_10px_rgb(0,0,0,0.2)] items-center justify-center rounded-full absolute bottom-10 right-4 bg-[#13EC5B]' >
+            <Pressable onPress={()=>router.navigate('/addCategories')} className='size-20 shadow-[0_3px_10px_rgb(0,0,0,0.2)] items-center justify-center rounded-full absolute bottom-10 right-4 bg-[#13EC5B]' >
                 <MaterialIcons name={'add'} color={'#102216'} size={35} className='font-bold' />
-            </View>
+            </Pressable>
         </View>
     )
 }
