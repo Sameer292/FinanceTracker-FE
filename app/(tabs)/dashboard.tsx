@@ -34,7 +34,7 @@ export default function dashboard() {
   const recentTransactions = [...today, ...yesterday]
   const totalBalance = total
   return (
-    <View className='bg-[#F6F8F6] gap-4 flex flex-1 items-center justify-center' >
+    <View className='gap-4 flex-1 items-center justify-center bg-white'>
       {/* Header */}
       <View className='w-full flex py-2 flex-row px-4 items-center justify-between'>
         <Text className='text-4xl font-bold'>Dashboard</Text>

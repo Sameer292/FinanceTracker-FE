@@ -42,9 +42,9 @@ export default function transactions() {
   }
   }
   return (
-    <KeyboardAvoidingView behavior='padding' className='flex-1 bg-[#F6F8F6]'>
+    <KeyboardAvoidingView behavior='padding' className='flex-1'>
 
-      <View className='flex-1 px-4 gap-8 bg-[#F6F8F6]'>
+      <View className='flex-1 px-4 gap-8'>
         {/* Header */}
         <View className='mt-2 justify-center items-center flex'>
           <View className='relative w-full items-center'>

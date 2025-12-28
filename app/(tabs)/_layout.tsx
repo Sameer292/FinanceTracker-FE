@@ -1,8 +1,13 @@
 import { Redirect, Tabs } from 'expo-router';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { useAuth } from 'app/context/AuthContext';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon, { IconName } from 'react-native-remix-icon';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
+import { useEffect } from 'react';
 
 export default function TabLayout() {
   const { authStatus } = useAuth()
@@ -13,14 +18,11 @@ export default function TabLayout() {
       </View>
     )
   }
-
   if (authStatus === "unauthenticated") {
     return <Redirect href="/login" />
   }
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F8F6' }} edges={['top']}  >
-      <AllTabs />
-    </SafeAreaView>
+    <AllTabs />
   );
 }
 
@@ -30,7 +32,7 @@ const AllTabs = () => {
       safeAreaInsets={{ bottom: 30 }}
       screenOptions={{
         tabBarStyle: {
-          paddingTop: 10,
+          paddingTop: 12,
           backgroundColor: '#F6F8F6',
         },
         headerShown: false
@@ -40,34 +42,72 @@ const AllTabs = () => {
         name="dashboard"
         options={{
           title: 'Dashboard',
-          tabBarIcon: ({ focused }) => <MaterialIcons size={25} name="dashboard" color={focused ? "#13EC5B" : "#4C9A66"} />,
-          tabBarLabel: ({ focused }) => <Text style={{ color: focused ? "#13EC5B" : "#4C9A66", fontSize: 14, fontWeight: focused ? "bold" : 'semibold' }} >Dashboard</Text>,
+          tabBarIcon: ({ focused }) => <CustomIconTabs focused={focused} focusedIcon="home-5-fill" outOfFocusIcon="home-5-line" />,
+          tabBarLabel: ({ focused }) => <Text style={{ fontFamily: focused ? 'Nunito_600SemiBold' : 'Nunito_400Regular', color: focused ? "#049F75" : "#8395A7" }} className='text-xs' >Home</Text>,
         }}
       />
       <Tabs.Screen
         name="transactions"
         options={{
           title: 'transactions',
-          tabBarIcon: ({ focused }) => <MaterialIcons size={25} name="receipt-long" color={focused ? "#13EC5B" : "#4C9A66"} />,
-          tabBarLabel: ({ focused }) => <Text style={{ color: focused ? "#13EC5B" : "#4C9A66", fontSize: 12, fontWeight: focused ? 'bold' : 'semibold' }}>Transactions</Text>,
+          tabBarIcon: ({ focused }) => <CustomIconTabs focused={focused} focusedIcon="receipt-fill" outOfFocusIcon="receipt-line" />,
+          tabBarLabel: ({ focused }) => <Text style={{ fontFamily: focused ? 'Nunito_600SemiBold' : 'Nunito_400Regular', color: focused ? "#049F75" : "#8395A7" }} className='text-xs'>Transactions</Text>,
         }}
       />
       <Tabs.Screen
         name="budgets"
         options={{
           title: 'budgets',
-          tabBarIcon: ({ focused }) => <MaterialIcons size={25} name="pie-chart" color={focused ? "#13EC5B" : "#4C9A66"} />,
-          tabBarLabel: ({ focused }) => <Text style={{ color: focused ? "#13EC5B" : "#4C9A66", fontSize: 12, fontWeight: focused ? 'bold' : 'semibold' }}>Budgets</Text>,
+          tabBarIcon: ({ focused }) => <CustomIconTabs focused={focused} focusedIcon="pie-chart-fill" outOfFocusIcon="pie-chart-line" />,
+          tabBarLabel: ({ focused }) => <Text style={{ fontFamily: focused ? 'Nunito_600SemiBold' : 'Nunito_400Regular', color: focused ? "#049F75" : "#8395A7" }} className='text-xs'>Budgets</Text>,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: 'profile',
-          tabBarIcon: ({ focused }) => <MaterialIcons size={25} name="person" color={focused ? "#13EC5B" : "#4C9A66"} />,
-          tabBarLabel: ({ focused }) => <Text style={{ color: focused ? "#13EC5B" : "#4C9A66", fontSize: 12, fontWeight: focused ? 'bold' : 'semibold' }}>Profile</Text>,
+          tabBarIcon: ({ focused }) => <CustomIconTabs focused={focused} focusedIcon="user-fill" outOfFocusIcon="user-line" />,
+          tabBarLabel: ({ focused }) => <Text style={{ fontFamily: focused ? 'Nunito_600SemiBold' : 'Nunito_400Regular', color: focused ? "#049F75" : "#8395A7" }} className='text-xs'>Profile</Text>,
         }}
       />
     </Tabs>
   )
 }
+
+const CustomIconTabs = ({
+  focusedIcon,
+  outOfFocusIcon,
+  focused,
+}: {
+  focusedIcon: IconName
+  outOfFocusIcon: IconName
+  focused: boolean
+}) => {
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    scale.value = withSpring(focused ? 1.2 : 1, {
+      damping: 15,
+      stiffness: 150,
+    });
+  }, [focused]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <Animated.View
+      style={animatedStyle}
+      className={`w-17 h-10 ${
+        focused ? 'bg-[#CAF0F8]' : 'bg-[#F6F8F6]'
+      } items-center rounded-4xl justify-center mb-4`}
+    >
+      <Icon
+        name={focused ? focusedIcon : outOfFocusIcon}
+        size={24}
+        color={focused ? '#06D6A0' : '#8395A7'}
+      />
+    </Animated.View>
+  );
+};

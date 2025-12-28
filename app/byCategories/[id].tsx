@@ -29,7 +29,7 @@ export default function Screen() {
     </View>
   }
   return (
-    <View className='flex-1 bg-[#F6F8F6] gap-4'>
+    <View className='flex-1 gap-4'>
       {/* Header */}
       <View className='border-b mt-2 border-b-[#d6d7d8] pb-4 px-4 justify-center items-center flex'>
         <View className='flex-row gap-5 items-center w-full'>

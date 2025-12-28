@@ -20,7 +20,6 @@ export default function transactions() {
     queryKey: ['categories'],
     queryFn: getCategories,
   })
-console.log(MyTransactions?.transactions)
   useFocusEffect(
     React.useCallback(() => {
       refetch()
@@ -58,7 +57,7 @@ console.log(MyTransactions?.transactions)
 
 
   return (
-    <View className='bg-[#F6F8F6] gap-4 flex h-full items-center justify-center' >
+    <View className='gap-4 flex h-full items-center justify-center' >
       {/* Header */}
       <View className='flex flex-row px-4 mt-2 items-center'>
         <View className='items-center flex-1' >
