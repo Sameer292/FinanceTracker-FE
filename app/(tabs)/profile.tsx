@@ -12,7 +12,7 @@ export default function profile() {
     setAuthStatus("unauthenticated")
   }
   return (
-    <View className='flex h-full bg-[#F6F8F6] justify-center gap-12 px-4 items-center ' >
+    <View className='flex h-full justify-center gap-12 px-4 items-center ' >
       {/* Header */}
       <View className='flex relative justify-center w-full px-4 items-center' >
         <Text className='text-2xl font-bold'>Profile</Text>

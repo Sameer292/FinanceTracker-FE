@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (isAxiosError(err)) {
         toast.error('Failed logging in', {
           duration: 2000,
-          description: err.response?.data.detail || "Internam server error",
+          description: err.response?.data.detail || "Internal server error",
           richColors: true,
         })
       } else {

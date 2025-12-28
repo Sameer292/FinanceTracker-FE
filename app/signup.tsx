@@ -1,10 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { HomeIcon } from 'app/assets/SVGIcons/HomeIcon'
 import { useAuth } from 'app/context/AuthContext'
 import { Link } from 'expo-router'
-import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { KeyboardAvoidingView, Pressable, Text, TextInput, View } from 'react-native'
+import { KeyboardAvoidingView, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import z from 'zod'
+import Icon from 'react-native-remix-icon'
+import { useState } from 'react'
 
 export default function signup() {
   const { register } = useAuth()
@@ -33,114 +35,110 @@ export default function signup() {
     register(properData)
   }
 
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding'>
-      <View className='flex-1 bg-[#F6F8F6] px-4 justify-center items-center'>
-        <View className='gap-12 -mt-32 h-max w-full justify-center items-center'>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding' className='bg-white'>
+      <ScrollView style={{ flex: 1 }} keyboardDismissMode='interactive' keyboardShouldPersistTaps='handled' contentContainerStyle={{ flex: 1, justifyContent: 'center' }} >
+        <View className='gap-12 px-4 -mt-20 h-max w-full justify-center items-center'>
           {/* Header */}
-          <View className='gap-2 w-full items-center justify-center' >
-            <Text className='text-4xl font-bold' >Create your account</Text>
-            <Text className='text-xl font-semibold text-[#4B5563] '>Track your finances with ease.</Text>
+          <View className=' gap-7 justify-center items-center'>
+            <View className='rounded-full size-20 items-center justify-center'>
+              <HomeIcon />
+            </View>
+            <View className='items-center gap-1'>
+
+              <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-4xl text-[#073B4C]' >
+                Sign up to Expensia
+              </Text>
+              <Text style={{ fontFamily: 'Nunito_400Regular' }} className='text-center text-[#8395A7]' >
+                Your personal finance dashboard starts here.
+              </Text>
+            </View>
           </View>
-          {/* Body */}
-          <View className='gap-4 w-full items-center justify-center'>
-            <View className='gap-2  w-full ' >
-              <Text className='text-lg font-semibold' >Full name</Text>
+          <View className='w-full gap-6'>
+            <View className='gap-4 '>
               <Controller
                 control={methods.control}
                 name='name'
-                render={({ field }) => (
-                  <TextInput
-                    {...field}
-                    className='bg-white h-14 border border-[#D1D5DB] text-lg font-medium rounded-lg px-4 py-2'
-                    placeholder='e.g., Alex Doe'
-                    onChangeText={(text) => methods.setValue('name', text)}
-                  />
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput placeholder='Enter your full name' value={value} onChangeText={onChange} style={{ fontFamily: 'Nunito_400Regular' }} onBlur={onBlur} placeholderTextColor={'#8395A7'} className='h-10 border border-[#D9E3E8] text-[#37474F] text-sm rounded-lg px-4 py-2.5' />
                 )}
               />
               {
                 methods.formState.errors.name && (
-                  <Text className='text-red-500' >{methods.formState.errors.name.message}</Text>
+                  <Text className='text-red-500' >
+                    {methods.formState.errors.name.message}
+                  </Text>
                 )
               }
             </View>
-            <View className='gap-2 w-full' >
-              <Text className='text-lg font-semibold'>Email</Text>
+            <View className='gap-4 '>
               <Controller
                 control={methods.control}
                 name='email'
-                render={({ field }) => (
-                  <TextInput
-                    {...field}
-                    className='bg-white h-14 border border-[#D1D5DB] text-lg font-medium rounded-lg px-4 py-2'
-                    placeholder='you@example.com'
-                    onChangeText={(text) => methods.setValue('email', text)}
-                  />
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput placeholder='Enter your email address' value={value} onChangeText={onChange} style={{ fontFamily: 'Nunito_400Regular' }} onBlur={onBlur} placeholderTextColor={'#8395A7'} className='h-10 border border-[#D9E3E8] text-[#37474F] text-sm rounded-lg px-4 py-2.5' />
                 )}
               />
               {
                 methods.formState.errors.email && (
-                  <Text className='text-red-500' >{methods.formState.errors.email.message}</Text>
+                  <Text className='text-red-500' >
+                    {methods.formState.errors.email.message}
+                  </Text>
                 )
               }
             </View>
-            <View className='gap-2 w-full' >
-              <Text className='text-lg font-semibold'>Password</Text>
+            <View className='gap-4 flex-row items-center border-[#D9E3E8] border rounded-lg px-4'>
               <Controller
                 control={methods.control}
                 name='password'
-                render={({ field }) => (
-                  <TextInput
-                    className='bg-white h-14 border border-[#D1D5DB] text-lg font-medium rounded-lg px-4 py-2'
-                    secureTextEntry
-                    placeholder='Create a strong password'
-                    onChangeText={(text) => field.onChange(text)}
-                  />
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput onChangeText={onChange} value={value} onBlur={onBlur} secureTextEntry={!isPasswordVisible} placeholder='Create a password' returnKeyType='send' placeholderTextColor={'#8395A7'} style={{ fontFamily: 'Nunito_400Regular' }} className='flex-1 h-10 text-[#37474F] text-sm rounded-lg py-2.5' />
                 )}
               />
+              <Icon onPress={() => setIsPasswordVisible(!isPasswordVisible)} name={isPasswordVisible ? 'eye-off-line' : 'eye-line'} size={27} color='#D9E3E8' />
               {
                 methods.formState.errors.password && (
-                  <Text className='text-red-500' >{methods.formState.errors.password.message}</Text>
+                  <Text className='text-red-500'>
+                    {methods.formState.errors.password.message}
+                  </Text>
                 )
               }
             </View>
-            <View className='gap-2 w-full' >
-              <Text className='text-lg font-semibold'>Confirm password</Text>
+            <View className='gap-4 flex-row items-center border-[#D9E3E8] border rounded-lg px-4'>
               <Controller
                 control={methods.control}
                 name='confirmPassword'
-                render={({ field }) => (
-                  <TextInput
-                    className='bg-white h-14 border border-[#D1D5DB] text-lg font-medium rounded-lg px-4 py-2'
-                    secureTextEntry
-                    placeholder='Re-enter your password'
-                    onChangeText={(text) => field.onChange(text)}
-                  />
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput onChangeText={onChange} value={value} onBlur={onBlur} secureTextEntry={!isPasswordVisible} placeholder='Re-enter your password' returnKeyType='send' placeholderTextColor={'#8395A7'} style={{ fontFamily: 'Nunito_400Regular' }} className='flex-1 h-10 text-[#37474F] text-sm rounded-lg py-2.5' />
                 )}
               />
+              <Icon onPress={() => setIsPasswordVisible(!isPasswordVisible)} name={isPasswordVisible ? 'eye-off-line' : 'eye-line'} size={27} color='#D9E3E8' />
               {
-                methods.formState.errors.confirmPassword && (
-                  <Text className='text-red-500' >{methods.formState.errors.confirmPassword.message}</Text>
+                methods.formState.errors.password && (
+                  <Text className='text-red-500'>
+                    {methods.formState.errors.password.message}
+                  </Text>
                 )
               }
             </View>
-            <Pressable onPress={methods.handleSubmit(onSubmit)} className='bg-[#13EC5B] h-14 w-full justify-center items-center rounded-xl mt-4'>
-              <Text className='text-xl font-semibold' >
-                Sign up
+            <Pressable disabled={!methods.formState.isValid} onPress={methods.handleSubmit(onSubmit)} className='bg-[#06D6A0] h-10 justify-center items-center rounded-xl'>
+              <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-lg text-white' >
+                Sign Up
               </Text>
             </Pressable>
-            <View className='flex flex-row gap-2 items-center justify-center' >
-              <Text className='text-[#4B5563]' >Already have an account?</Text>
-              <Link href={'/login'} >
-                <Text className='underline text-[#0da33f] font-bold' >
+            <View className='flex flex-row gap-1 items-center justify-center' >
+              <Text style={{ fontFamily: 'Nunito_400Regular' }} className='text-[#8395A7] text-sm'>Already registered?</Text>
+              <Link href={'/login'}>
+                <Text className='text-[#06D6A0] text-sm'>
                   Login
                 </Text>
               </Link>
             </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   )
 }
-

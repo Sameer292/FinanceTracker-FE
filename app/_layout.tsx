@@ -1,6 +1,5 @@
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { HeroUINativeProvider } from 'heroui-native';
-import { useEffect } from "react";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Toaster } from 'sonner-native';
@@ -8,9 +7,19 @@ import "./globals.css";
 import { AuthProvider, useAuth } from "app/context/AuthContext";
 import { ActivityIndicator } from "react-native";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useFonts, Nunito_700Bold, Nunito_400Regular, Nunito_600SemiBold } from '@expo-google-fonts/nunito'
+import 'react-native-reanimated';
 
+const queryClient = new QueryClient()
 export default function RootLayout() {
-  const queryClient = new QueryClient()
+  const [loaded, error] = useFonts({
+    Nunito_700Bold,
+    Nunito_400Regular,
+    Nunito_600SemiBold
+  })
+  if (!loaded && !error) {
+    return null;
+  }
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -39,7 +48,7 @@ const Stacks = () => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F8F6' }} edges={['top']}>
+    <SafeAreaView style={{ flex: 1 }} edges={['top']}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Protected guard={authStatus==='unauthenticated'} >
           <Stack.Screen name='login' options={{ animation: 'slide_from_right' }} />
