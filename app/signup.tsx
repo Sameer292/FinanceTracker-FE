@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { HomeIcon } from 'app/assets/SVGIcons/HomeIcon'
+import { HomeIcon } from 'app/assets/SVGIcons/SVGIconsCustom'
 import { useAuth } from 'app/context/AuthContext'
 import { Link } from 'expo-router'
 import { Controller, useForm } from 'react-hook-form'

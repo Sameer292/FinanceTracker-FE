@@ -1,200 +1,111 @@
 import { useQuery } from '@tanstack/react-query'
+import { TrendUp, TrendDown } from 'app/assets/SVGIcons/SVGIconsCustom'
 import { TransactionCard } from 'app/components/TransactionCard'
-import { getTransactions, getCategories, getRecentTransactions } from 'app/lib/ApiCalls'
-import { getTopCategories, splitByDateRanges } from 'app/lib/utilityFns'
-import { LinearGradient } from 'expo-linear-gradient'
+import { useAuth } from 'app/context/AuthContext'
+import { getRecentTransactions } from 'app/lib/ApiCalls'
+import { formatDate } from 'app/lib/utilityFns'
 import { Link } from 'expo-router'
-import { ScrollShadow } from 'heroui-native'
-import React from 'react'
-import { FlatList, Image, ScrollView, Text, View } from 'react-native'
-import { PieChart, pieDataItem } from 'react-native-gifted-charts'
-import PagerView from 'react-native-pager-view';
+import { FlatList, Pressable, Text, TouchableOpacity, View } from 'react-native'
+import Icon from 'react-native-remix-icon'
 
 export default function dashboard() {
+  const { user } = useAuth()
 
-  const { data: MyTransactions, isLoading, error, refetch } = useQuery<{ transactions: TransactionType[] }>({
-    queryKey: ['transactions'],
-    queryFn: getTransactions
-  })
-  const { data: categories, isLoading: isCategoryLoading, error: categoryError } = useQuery<{ categories: Category[] }>({
-    queryKey: ['categories'],
-    queryFn: getCategories,
-  })
-  const { data: latestTransactions } = useQuery<{ transactions: TransactionType[] }>({
+  const { data: latestTransactions, refetch: refetchRecentTransactions, isLoading: isRecentTransactionsLoading } = useQuery<{ transactions: TransactionType[] }>({
     queryKey: ['recentTransactions'],
     queryFn: getRecentTransactions
   })
 
-  const { chartData, topCategories } = getTopCategories(MyTransactions?.transactions ?? [], 4, categories?.categories ?? [])
-
-  const total = MyTransactions?.transactions.reduce((t, e) => t + e.amount, 0)
-  const chartInnerRadius = 90
-  const currency = '$'
-  const { today, yesterday } = splitByDateRanges<TransactionType>(MyTransactions?.transactions ?? [])
-  const recentTransactions = [...today, ...yesterday]
-  const totalBalance = total
   return (
-    <View className='gap-4 flex-1 items-center justify-center bg-white'>
+    <View className='gap-4 flex-1 items-center pt-5 px-4 justify-center bg-white relative'>
       {/* Header */}
-      <View className='w-full flex py-2 flex-row px-4 items-center justify-between'>
-        <Text className='text-4xl font-bold'>Dashboard</Text>
-        <View className='border-2 rounded-full w-16 justify-center items-center h-16 ' >
-          <Image
-            source={require('../../assets/IMG_2110.jpg')}
-            style={{ width: 64, height: 64, borderRadius: 32 }}
-          />
+      <View className='w-full flex py-2 '>
+        <View className='flex justify-between flex-row'>
+          <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-2xl'>Good evening, {user?.name.split(' ')[0]}</Text>
+          <View className='gap-4 flex-row'>
+            <Pressable onPress={() => console.log("Search")}>
+              <Icon name='search-line' color='#8395A7' size={25} />
+            </Pressable>
+            <Link href='/categories'>
+              <Icon name='box-3-line' color='#8395A7' size={25} />
+            </Link>
+          </View>
         </View>
+        <Text style={{ fontFamily: 'Nunito_500Medium' }} className='text-lg'>
+          {
+            formatDate(new Date())
+          }
+        </Text>
       </View>
       {/* Body */}
-      <ScrollShadow className='flex-1 w-full' visibility='top' LinearGradientComponent={LinearGradient} color={'#565656'} size={10}>
-        <ScrollView
-          style={{ width: '100%' }}
-          contentContainerStyle={{ paddingBottom: 60 }}
+      <View className='w-full gap-3'>
+        <View className='flex-row justify-between border-[0.5] items-center border-[#A9DFBF] bg-linear-to-r from-[#F5F7FA] to-[#F1F9F4] rounded-lg pl-4.5 pr-5'>
+          <View className='py-4'>
+            <Text className='text-[#8395A7] text-lg' style={{ fontFamily: 'Nunito_600SemiBold' }} >Total Income</Text>
+            <Text className='text-[#37474F] text-xl' style={{ fontFamily: 'Nunito_700Bold' }} >$ {user?.current_balance ?? 0.00}</Text>
+          </View>
+          <View>
+            <TrendUp />
+          </View>
+        </View>
+        <View className='flex-row justify-between items-center pr-5 border-[0.5] border-[#FADBD8] bg-linear-to-r from-[#F5F7FA] to-[#FEF5F5] rounded-lg pl-4.5'>
+          <View className='py-4'>
+            <Text className='text-[#8395A7] text-lg' style={{ fontFamily: 'Nunito_600SemiBold' }} >Total Expense</Text>
+            <Text className='text-[#37474F] text-xl' style={{ fontFamily: 'Nunito_700Bold' }} >$ {user?.current_balance ?? 0.00}</Text>
+          </View>
+          <View>
+            <TrendDown />
+          </View>
+        </View>
+      </View>
+      <View className='flex-1 gap-4 mt-4 w-full'>
+        <View className='w-full justify-between flex-row items-center'>
+          <Text className='text-lg' style={{ fontFamily: 'Nunito_600SemiBold' }}>
+            Recent Transactions
+          </Text>
+          {
+            latestTransactions && latestTransactions?.transactions.length > 0 && (
+              <TouchableOpacity className='p-4' onPress={() => console.log("See all")}>
+                <Text className='text-[#8395A7]' style={{ fontFamily: 'Nunito_600SemiBold', fontSize: 14 }}>See All</Text>
+              </TouchableOpacity>
+            )
+          }
+        </View>
+        <FlatList
+          data={latestTransactions?.transactions}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <TransactionCard {...item} currency='$' />}
           showsVerticalScrollIndicator={false}
-        >
-          <View className='flex-1 w-full gap-4'>
-            <View className='flex-1 shadow-md mx-4 rounded-3xl bg-white pl-5 justify-center py-8 gap-2.5 ' >
-              <Text className='text-[#4C9A66] text-xl font-semibold'>
-                Total Balance
-              </Text>
-              <Text className='text-4xl font-bold' >
-                ${totalBalance?.toLocaleString()}
-              </Text>
-
-            </View>
-            <View className='flex-row px-4 gap-4 ' >
-              <Link style={{ flex: 1 }} href={'/addTransactions'}>
-                <View style={{ width: '100%' }} className='bg-[#13EC5B] justify-center items-center py-4 px-6 rounded-full flex-1' >
-                  <Text className='font-bold text-xl' >
-                    Add Transaction
-                  </Text>
-                </View>
-              </Link>
-            </View>
-            <PagerView style={{ height: 350, borderWidth:2, elevation: 5}} className='shadow-2xl' initialPage={0}>
-
-              <View style={{ elevation: 5 }} className='mx-4 mb-3 px-5 pb-10 bg-white pt-4 gap-4 rounded-3xl'>
-                <View className='w-full'>
-                  <Text className='text-3xl font-bold'>
-                    Expenses this month
-                  </Text>
-                </View>
-                <View className='relative justify-center items-center '>
-                  <View >
-                    {/* <PagerView className='flex-1 border-2' initialPage={0}> */}
-                    {/* <PieChart
-                      key={0}
-                      donut
-                      innerRadius={chartInnerRadius}
-                      data={chartData}
-                    /> */}
-                    <PieChart
-                      key={1}
-                      donut
-                      innerRadius={chartInnerRadius}
-                      data={chartData}
-                    />
-                    {/* </PagerView> */}
-                    <View
-                      style={{
-                        position: 'absolute',
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                        bottom: 0,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Text className='text-2xl text-[#4c9166]'>Total</Text>
-                      <Text className='text-4xl font-bold'> {currency}{total?.toLocaleString()}</Text>
-                    </View>
-                  </View>
-                </View>
-                <View>
-                  {/* {
-                  chartData.map((data) => {
-                    return (
-                      <View key={data.} className='items-center justify-center'>
-                        <View style={{ width: '50%', gap: 8 }} className=' flex-row justify-between items-center'>
-                          <View style={{ width: '10%' }} className=' items-center justify-center' >
-                            <View style={{ width: 12, height: 12, backgroundColor: data.color }} className={`rounded-full border-[${data.color}] h-3 bg-[${data.color}]`} ></View>
-                          </View>
-                          <View className='flex-1 flex-row justify-between'>
-                            <Text>{data.text}</Text>
-                            <Text className='font-bold' >{currency}{data.value}</Text>
-                          </View>
-                        </View>
-                      </View>)
-                  })
-                } */}
-                </View>
-              </View>
-              <View style={{ elevation: 5 }} className='mx-4 mb-3 px-5 pb-10 bg-white pt-4 gap-4 rounded-3xl'>
-              <View className='w-full'>
-                <Text className='text-3xl font-bold'>
-                  Expenses this month
+          contentContainerClassName='flex-1 items-center pb-10 gap-2.5'
+          onRefresh={refetchRecentTransactions}
+          refreshing={isRecentTransactionsLoading}
+          ListEmptyComponent={
+            () => (
+              <View className='items-center gap-2 justify-center flex-1'>
+                <Icon name='receipt-fill' color='#06D6A0' size={24} />
+                <Text className='text-center text-xl' style={{ fontFamily: 'Nunito_600SemiBold' }}>No transactions yet.</Text>
+                <Text className='text-[#8395A7] text-lg text-center' style={{ fontFamily: 'Nunito_400Regular' }}>
+                  Start tracking your spending by adding your first expense or income.
                 </Text>
               </View>
-              <View className='relative justify-center items-center '>
-                <View >
-                  <PieChart
-                                        key={1}
-                    donut
-                    innerRadius={chartInnerRadius}
-                    data={chartData}
-                  />
-                  <View
-                    style={{
-                      position: 'absolute',
-                      left: 0,
-                      right: 0,
-                      top: 0,
-                      bottom: 0,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <Text className='text-2xl text-[#4c9166]'>Total</Text>
-                    <Text className='text-4xl font-bold'> {currency}{total?.toLocaleString()}</Text>
-                  </View>
-                </View>
-              </View>
-              <View>
-                {/* {
-                  chartData.map((data) => {
-                    return (
-                      <View key={data.} className='items-center justify-center'>
-                        <View style={{ width: '50%', gap: 8 }} className=' flex-row justify-between items-center'>
-                          <View style={{ width: '10%' }} className=' items-center justify-center' >
-                            <View style={{ width: 12, height: 12, backgroundColor: data.color }} className={`rounded-full border-[${data.color}] h-3 bg-[${data.color}]`} ></View>
-                          </View>
-                          <View className='flex-1 flex-row justify-between'>
-                            <Text>{data.text}</Text>
-                            <Text className='font-bold' >{currency}{data.value}</Text>
-                          </View>
-                        </View>
-                      </View>)
-                  })
-                } */}
-              </View>
-            </View>
-            </PagerView>
-            <View style={{ gap: 10 }} className='px-4'>
-              <Text className='text-3xl font-bold'>Recent Transactions</Text>
-              <View style={{ gap: 12 }}>
-                {
-                  latestTransactions?.transactions.map((expense) => {
-                    return (
-                      <TransactionCard key={expense.id} {...expense} currency={currency} />
-                    )
-                  })
-                }
-              </View>
-            </View>
-          </View>
-        </ScrollView>
-      </ScrollShadow>
+            )
+          }
+          ListFooterComponent={
+            () => latestTransactions && latestTransactions?.transactions.length > 0 && (
+              <TouchableOpacity className='border-[#D9E3E8] mt-5 border rounded-lg px-4 py-2.5 w-max' onPress={() => console.log('Bottom btn')}>
+                <Text className='text-[#118AB2] text-sm' style={{ fontFamily: 'Nunito_500Medium' }}>
+                  See All
+                </Text>
+              </TouchableOpacity>
+            )
+          }
+        />
+      </View>
+      <View className='absolute bottom-4 right-4'>
+        <Link href='/addTransactions' className='bg-[#06D6A0] border border-[#D9E3E8] rounded-full p-3'>
+          <Icon name='add-line' color='white' size={24} />
+        </Link>
+      </View>
     </View>
   )
 }
