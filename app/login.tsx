@@ -1,4 +1,4 @@
-import { HomeIcon } from 'app/assets/SVGIcons/HomeIcon'
+import { HomeIcon } from 'app/assets/SVGIcons/SVGIconsCustom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAuth } from 'app/context/AuthContext'
 import { Link } from 'expo-router'

@@ -7,7 +7,7 @@ import "./globals.css";
 import { AuthProvider, useAuth } from "app/context/AuthContext";
 import { ActivityIndicator } from "react-native";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useFonts, Nunito_700Bold, Nunito_400Regular, Nunito_600SemiBold } from '@expo-google-fonts/nunito'
+import { useFonts, Nunito_700Bold, Nunito_400Regular, Nunito_600SemiBold, Nunito_500Medium } from '@expo-google-fonts/nunito'
 import 'react-native-reanimated';
 
 const queryClient = new QueryClient()
@@ -15,7 +15,8 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({
     Nunito_700Bold,
     Nunito_400Regular,
-    Nunito_600SemiBold
+    Nunito_600SemiBold,
+    Nunito_500Medium
   })
   if (!loaded && !error) {
     return null;
@@ -56,9 +57,9 @@ const Stacks = () => {
         </Stack.Protected>
         <Stack.Protected guard={authStatus==='authenticated'}>
           <Stack.Screen name='(tabs)' options={{ animation: 'slide_from_right' }} />
-          <Stack.Screen name='categories' options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name='categories' options={{ animation: 'fade_from_bottom' }} />
           <Stack.Screen name='byCategories/[id]' options={{ animation: 'slide_from_right' }} />
-          <Stack.Screen name='addTransactions' options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name='addTransactions' options={{ animation: 'ios_from_right' }} />
         </Stack.Protected>
       </Stack>
     </SafeAreaView>
