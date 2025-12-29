@@ -1,31 +1,45 @@
 import { MaterialIcons } from '@expo/vector-icons'
-import { useRouter } from 'expo-router'
-import React from 'react'
-import { FlatList, Pressable, Text, View } from 'react-native'
+import { Link, useRouter } from 'expo-router'
+import { useState } from 'react'
+import { FlatList, Pressable, Text, TextInput, View } from 'react-native'
 import { useQuery } from '@tanstack/react-query'
 import { getCategories } from 'app/lib/ApiCalls'
+import Icon from 'react-native-remix-icon'
 
 export default function categories() {
     const { data: Categories, isLoading, error } = useQuery<{ categories: Category[] }>({
         queryKey: ['categories'],
         queryFn: getCategories,
     })
+    const [searchText, setSearchText] = useState('')
     const router = useRouter()
-    const handleClick = (id:number) => {
+    const handleClick = (id: number) => {
         router.push(`/byCategories/${id}`)
     }
+    const filteredCategories = Categories?.categories.filter((category) =>
+        category.name.toLowerCase().includes(searchText.toLowerCase())
+    )
     return (
-        <View className='flex-1 gap-8'>
+        <View className='flex-1 px-4 gap-4 pt-5 bg-white '>
             {/* Header */}
-            <View className='border-b mt-2 border-b-[#d6d7d8] pb-4 px-4 justify-center items-center flex'>
-                <View className='relative w-full items-center'>
-                    <Text className='text-2xl font-semibold'>Categories</Text>
-                    <Pressable className='absolute left-0' onPress={() => router.back()}>
+            <View className='pb-4 gap-4 justify-center items-center flex'>
+                <View className='w-full gap-2 flex-row items-center'>
+                    <Pressable onPress={() => router.back()}>
                         <Text className='font-semibold text-xl text-[#13EC5B]'>
                             <MaterialIcons name={'chevron-left'} size={35} color={'#000'} />
                         </Text>
                     </Pressable>
-
+                    <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-xl'>Categories</Text>
+                </View>
+                <View className='w-full flex-row items-center gap-2 border border-[#D9E3E8] rounded-lg  px-3'>
+                    <Icon name='search-line' color='#8395A7' size={20} />
+                    <TextInput placeholderTextColor={'#8395A7'} value={searchText} style={{ fontFamily: 'Nunito_400Regular' }} onChangeText={setSearchText} placeholder='Search' className='flex-1 text-lg text-[#37474F]' />
+                    {
+                        searchText.length > 0 &&
+                        <Pressable onPress={() => setSearchText('')}>
+                            <Icon name='close-circle-line' color='#8395A7' size={25} />
+                        </Pressable>
+                    }
                 </View>
             </View>
             {/* Body */}
@@ -45,36 +59,50 @@ export default function categories() {
                 {
                     !isLoading && !error && (
                         <FlatList
-                            data={Categories?.categories}
-                            contentContainerClassName='px-4 gap-4'
+                            data={filteredCategories as Category[]}
+                            contentContainerClassName='gap-4 flex-1 items-center '
                             bounces
                             renderItem={({ item }) => (
-                                <Pressable onPress={() => handleClick(item.id)} className='h-20 justify-center bg-white shadow-[0_3px_5px_rgb(0,0,0,0.1)] items-center gap-4 flex-row px-4 py-2 rounded-2xl'>
-                                    <View
-                                        style={{ backgroundColor: `${item.color}40` }}
-                                        className='rounded-full justify-center items-center size-14'
-                                    >
-                                        <MaterialIcons
-                                            name={item.icon as any}
-                                            color={item.color}
-                                            size={25}
-                                        />
+                                <Pressable onPress={() => handleClick(item.id)} className='justify-center w-full items-center gap-4 flex-row py-4 px-3 border border-[#D9E3E8] rounded-2xl'>
+                                    <View style={{ backgroundColor: item.color, borderRadius: 30 }} className={`size-15 justify-center items-center`} >
+                                        <MaterialIcons name={item.icon as any} size={24} color={'white'} />
+                                        {/* <Icon name={item.icon as IconName} size={24} color="white"/> */}
                                     </View>
-
                                     <View className='flex-row justify-between items-center flex-1'>
-                                        <Text className='text-lg text-[#102216] font-semibold'>
+                                        <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-lg text-[#37474F]'>
                                             {item.name}
                                         </Text>
-                                        <MaterialIcons name='chevron-right' color='#6B7280' size={25} />
+                                        <MaterialIcons name='chevron-right' color='#6B7280' size={35} />
                                     </View>
                                 </Pressable>
                             )}
+                            ListEmptyComponent={() => {
+                                if (Categories?.categories && Categories?.categories.length > 0 && filteredCategories?.length === 0 && searchText.length > 0) {
+                                    return <View className='items-center gap-2 justify-center flex-1 -mt-50'>
+                                        <Icon name='menu-search-fill' color='#06D6A0' size={24} />
+                                        <Text className='text-center text-xl' style={{ fontFamily: 'Nunito_600SemiBold' }}>No matches found.</Text>
+                                        <Text className='text-[#8395A7] text-lg text-center' style={{ fontFamily: 'Nunito_400Regular' }}>
+                                            We couldn't find anything for "{searchText}". Check your spelling or try a different category.
+                                        </Text>
+                                    </View>
+                                } else {
+                                    return <View className='items-center gap-2 justify-center flex-1 -mt-50'>
+                                        <Icon name='box-3-fill' color='#06D6A0' size={24} />
+                                        <Text className='text-center text-xl' style={{ fontFamily: 'Nunito_600SemiBold' }}>No categories yet.</Text>
+                                        <Text className='text-[#8395A7] text-lg text-center' style={{ fontFamily: 'Nunito_400Regular' }}>
+                                            Create categories to organize your spending and see where your money goes.
+                                        </Text>
+                                    </View>
+                                }
+                            }}
                         />
                     )
                 }
             </View>
-            <View className='size-20 shadow-[0_3px_10px_rgb(0,0,0,0.2)] items-center justify-center rounded-full absolute bottom-10 right-4 bg-[#13EC5B]' >
-                <MaterialIcons name={'add'} color={'#102216'} size={35} className='font-bold' />
+            <View className='absolute bottom-14 right-4'>
+                <Link href='/addTransactions' className='bg-[#06D6A0] border border-[#D9E3E8] rounded-full p-3'>
+                    <Icon name='add-line' color='white' size={24} />
+                </Link>
             </View>
         </View>
     )
