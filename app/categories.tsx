@@ -100,7 +100,7 @@ export default function categories() {
                 }
             </View>
             <View className='absolute bottom-14 right-4'>
-                <Link href='/addTransactions' className='bg-[#06D6A0] border border-[#D9E3E8] rounded-full p-3'>
+                <Link href='/addCategories' className='bg-[#06D6A0] border border-[#D9E3E8] rounded-full p-3'>
                     <Icon name='add-line' color='white' size={24} />
                 </Link>
             </View>

@@ -60,7 +60,7 @@ const Stacks = () => {
           <Stack.Screen name='categories' options={{ animation: 'fade_from_bottom' }} />
           <Stack.Screen name='byCategories/[id]' options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name='addTransactions' options={{ animation: 'slide_from_right' }} />
-          <Stack.Screen name='addCategories' options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name='addCategories' options={{ animation: 'ios_from_right' }} />
         </Stack.Protected>
       </Stack>
     </SafeAreaView>
