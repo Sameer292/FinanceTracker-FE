@@ -1,6 +1,6 @@
-import MaterialIcons from "@expo/vector-icons/MaterialIcons"
 import { useQuery } from "@tanstack/react-query"
 import { getCategories } from "app/lib/ApiCalls"
+import { isValidIcon } from "app/lib/utilityFns"
 import { View, Text } from "react-native"
 import Icon, { IconName } from "react-native-remix-icon"
 export const TransactionCard = ({ note, amount, currency, transaction_date, category_id, transaction_type }: TransactionCardType) => {
@@ -14,9 +14,12 @@ export const TransactionCard = ({ note, amount, currency, transaction_date, cate
     <View className='border border-[#D9E3E8] py-4 px-4 min-h-[50] items-center bg-white rounded-lg justify-center'>
       <View className='gap-2 flex-row justify-between w-full items-center'>
         <View className="flex-1 flex-row gap-5 items-center ">
-          <View style={{ backgroundColor: category?.color, borderRadius: 30 }} className={`size-15 justify-center items-center`} >
-            <MaterialIcons name={category?.icon as any} size={24} color={'white'} />
-            {/* <Icon name={category?.icon as IconName} size={24} color="white"/> */}
+          <View style={{ backgroundColor: category?.color, borderRadius: '100%' }} className={`size-15 justify-center items-center`} >
+            <Icon
+              name={isValidIcon(category?.icon ?? '') ? category?.icon as IconName : 'question-mark'}
+              size={24}
+              color="white"
+            />
           </View>
           <View style={{ gap: 4 }}>
             <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-xl text-[#37474F]'>{note}</Text>

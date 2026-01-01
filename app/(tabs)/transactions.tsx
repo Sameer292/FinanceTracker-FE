@@ -1,4 +1,3 @@
-import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import { useQuery } from '@tanstack/react-query'
 import { ItemsSelect } from 'app/components/ItemsSelectSheet'
 import { TransactionCard } from 'app/components/TransactionCard'
@@ -10,6 +9,7 @@ import { Link, useFocusEffect } from 'expo-router'
 import { ScrollShadow } from 'heroui-native'
 import React, { useMemo, useState } from 'react'
 import { RefreshControl, ScrollView, Text, View } from 'react-native'
+import Icon from 'react-native-remix-icon'
 
 export default function transactions() {
   const { data: MyTransactions, isLoading, refetch } = useQuery<{ transactions: TransactionType[] }>({
@@ -67,7 +67,7 @@ export default function transactions() {
         </View>
         <Link href={'/addTransactions'} className='absoluteRefreshControl'>
           <View className='bg-[#13EC5B] rounded-full'>
-            <MaterialIcons size={25} style={{ fontWeight: '900' }} name="add" color="white" />
+            <Icon size={25} style={{ fontWeight: '900' }} name="add-line" color="white" />
           </View>
         </Link>
       </View>

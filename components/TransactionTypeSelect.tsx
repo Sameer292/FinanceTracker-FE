@@ -1,7 +1,7 @@
 import { Select } from "heroui-native"
-import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useState } from "react"
 import { View, Text } from "react-native"
+import Icon, { IconName } from "react-native-remix-icon"
 
 const items: TransactionTypeSelect[] = [
     {
@@ -59,11 +59,7 @@ export const TransactionTypeSelect = ({ setectedTransactionType, setTransactionT
                                             return (
                                                 <View style={{ backgroundColor: isSelected ? transactionType.bgColor : '' }} className={`pr-4 pl-2.5 flex-1 gap-3 flex-row items-center w-full rounded-2xl h-16`}>
                                                     <View style={{ backgroundColor: `${transactionType.textColor}40`, borderRadius: '100%' }} className={`size-12 items-center justify-center rounded-full `}>
-                                                        <MaterialIcons
-                                                            name={transactionType.icon as any}
-                                                            size={20}
-                                                            color={transactionType.textColor}
-                                                        />
+                                                        <Icon name={transactionType.icon as IconName} size={20} color={transactionType.textColor} />
                                                     </View>
                                                     <Select.ItemLabel style={{ color: isSelected ? transactionType.textColor : '' }} className={`text-md font-bold`} />
                                                     <Select.ItemIndicator iconProps={{ color: transactionType.textColor }} />
@@ -92,8 +88,8 @@ const DateTrigger = ({ transactionType, isOpen }: { transactionType?: Transactio
         >
             <View className="flex-row items-center gap-2">
                 <View style={{ backgroundColor: `${text}40`, borderRadius: '100%' }} className={`size-10 items-center justify-center `}>
-                    <MaterialIcons
-                        name={transactionType?.icon as any}
+                    <Icon
+                        name={transactionType?.icon as IconName}
                         size={16}
                         color={transactionType?.textColor}
                     />
@@ -108,9 +104,9 @@ const DateTrigger = ({ transactionType, isOpen }: { transactionType?: Transactio
 
             {
                 isOpen ? (
-                    <Feather name="chevron-up" size={20} color={text} />
+                    <Icon name="arrow-up-s-line" size={20} color={text} />
                 ) : (
-                    <Feather name="chevron-down" size={20} color={text} />
+                    <Icon name="arrow-down-s-line" size={20} color={text} />
                 )
             }
         </View>

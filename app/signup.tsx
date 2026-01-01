@@ -78,7 +78,7 @@ export default function signup() {
                 control={methods.control}
                 name='email'
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput placeholder='Enter your email address' value={value} onChangeText={onChange} style={{ fontFamily: 'Nunito_400Regular' }} onBlur={onBlur} placeholderTextColor={'#8395A7'} className='h-10 border border-[#D9E3E8] text-[#37474F] text-sm rounded-lg px-4 py-2.5' />
+                  <TextInput placeholder='Enter your email address' value={value} keyboardType='email-address' onChangeText={onChange} style={{ fontFamily: 'Nunito_400Regular' }} onBlur={onBlur} placeholderTextColor={'#8395A7'} className='h-10 border border-[#D9E3E8] text-[#37474F] text-sm rounded-lg px-4 py-2.5' />
                 )}
               />
               {

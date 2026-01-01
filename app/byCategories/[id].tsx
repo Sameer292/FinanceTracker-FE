@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { getCategoryById, getTransactionsByCategory } from 'app/lib/ApiCalls';
 import { TransactionCard } from 'app/components/TransactionCard';
-import { MaterialIcons } from '@expo/vector-icons';
+import Icon from 'react-native-remix-icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScrollShadow } from 'heroui-native';
 
@@ -35,7 +35,7 @@ export default function Screen() {
         <View className='flex-row gap-5 items-center w-full'>
           <Pressable onPress={() => router.back()}>
             <Text className='font-semibold text-xl text-[#13EC5B]'>
-              <MaterialIcons name={'chevron-left'} size={35} color={'#000'} />
+              <Icon name={'arrow-left-s-line'} size={35} color={'#000'} />
             </Text>
           </Pressable>
           <Text className='text-2xl font-semibold'>{categoryResponse?.name}</Text>

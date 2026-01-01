@@ -1,4 +1,6 @@
 import { pieDataItem } from "react-native-gifted-charts";
+import { IconName } from "react-native-remix-icon";
+import { Icons } from "./constantValues";
 
 export function splitByDateRanges<T extends TransactionType>(data: T[]): { today: T[], yesterday: T[], lastWeek: T[] } {
   const today = new Date();
@@ -107,4 +109,8 @@ export function formatDate(date: Date): string {
   const month = date.toLocaleString("en-US", { month: "short" });
 
   return `${weekday}, ${day}${suffix} ${month}`;
+}
+
+export const isValidIcon = (icon: string): icon is IconName => {
+  return Icons.includes(icon as IconName)
 }
