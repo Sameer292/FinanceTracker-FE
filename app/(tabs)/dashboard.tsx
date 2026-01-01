@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { TrendUp, TrendDown } from 'app/assets/SVGIcons/SVGIconsCustom'
+import { ListSkeleton } from 'app/components/ListSkeleton'
 import { TransactionCard } from 'app/components/TransactionCard'
 import { useAuth } from 'app/context/AuthContext'
 import { getRecentTransactions } from 'app/lib/ApiCalls'
@@ -11,10 +12,11 @@ import Icon from 'react-native-remix-icon'
 export default function dashboard() {
   const { user } = useAuth()
 
-  const { data: latestTransactions, refetch: refetchRecentTransactions, isLoading: isRecentTransactionsLoading } = useQuery<{ transactions: TransactionType[] }>({
+  const { data: latestTransactions, isFetching, refetch: refetchRecentTransactions, isLoading: isRecentTransactionsLoading, error } = useQuery<{ transactions: TransactionType[] }>({
     queryKey: ['recentTransactions'],
     queryFn: getRecentTransactions
   })
+  const isInitialLoading = isRecentTransactionsLoading && !latestTransactions
 
   return (
     <View className='gap-4 flex-1 items-center pt-5 px-4 justify-center bg-white relative'>
@@ -71,35 +73,58 @@ export default function dashboard() {
             )
           }
         </View>
-        <FlatList
-          data={latestTransactions?.transactions}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <TransactionCard {...item} currency='$' />}
-          showsVerticalScrollIndicator={false}
-          contentContainerClassName='flex-1 items-center pb-10 gap-2.5'
-          onRefresh={refetchRecentTransactions}
-          refreshing={isRecentTransactionsLoading}
-          ListEmptyComponent={
-            () => (
-              <View className='items-center gap-2 justify-center flex-1'>
-                <Icon name='receipt-fill' color='#06D6A0' size={24} />
-                <Text className='text-center text-xl' style={{ fontFamily: 'Nunito_600SemiBold' }}>No transactions yet.</Text>
-                <Text className='text-[#8395A7] text-lg text-center' style={{ fontFamily: 'Nunito_400Regular' }}>
-                  Start tracking your spending by adding your first expense or income.
-                </Text>
-              </View>
-            )
-          }
-          ListFooterComponent={
-            () => latestTransactions && latestTransactions?.transactions.length > 0 && (
-              <TouchableOpacity className='border-[#D9E3E8] mt-5 border rounded-lg px-4 py-2.5 w-max' onPress={() => console.log('Bottom btn')}>
-                <Text className='text-[#118AB2] text-sm' style={{ fontFamily: 'Nunito_500Medium' }}>
-                  See All
-                </Text>
-              </TouchableOpacity>
-            )
-          }
-        />
+        {isInitialLoading && (
+          <View className="gap-2 w-full">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <ListSkeleton key={i} />
+            ))}
+          </View>
+        )}
+
+
+        {error && (
+          <View className="items-center gap-2 mt-10">
+            <Text>{(error as Error)?.message || 'Failed to load transactions'}</Text>
+            <Pressable onPress={() => refetchRecentTransactions()} className="px-4 py-2 bg-[#06D6A0] rounded-lg">
+              <Text className="text-white">Retry</Text>
+            </Pressable>
+          </View>
+        )}
+        {isFetching && !isInitialLoading && (
+          <Text className='text-center text-[#8395A7] mb-2'>Refreshing…</Text>
+        )}
+        {
+          !isRecentTransactionsLoading && !error &&
+          <FlatList
+            data={latestTransactions?.transactions ?? []}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => <TransactionCard {...item} currency='$' />}
+            showsVerticalScrollIndicator={false}
+            contentContainerClassName='items-center pb-20 gap-2.5 pt-1.5 grow'
+            onRefresh={refetchRecentTransactions}
+            refreshing={isFetching}
+            ListEmptyComponent={
+              () => (
+                <View className='items-center gap-2 justify-center flex-1'>
+                  <Icon name='receipt-fill' color='#06D6A0' size={24} />
+                  <Text className='text-center text-xl' style={{ fontFamily: 'Nunito_600SemiBold' }}>No transactions yet.</Text>
+                  <Text className='text-[#8395A7] text-lg text-center' style={{ fontFamily: 'Nunito_400Regular' }}>
+                    Start tracking your spending by adding your first expense or income.
+                  </Text>
+                </View>
+              )
+            }
+            ListFooterComponent={
+              () => (latestTransactions && latestTransactions?.transactions.length > 0) && (
+                <TouchableOpacity className='border-[#D9E3E8] mt-5 border rounded-lg px-4 py-2.5 w-max' onPress={() => console.log('Bottom btn')}>
+                  <Text className='text-[#118AB2] text-sm' style={{ fontFamily: 'Nunito_500Medium' }}>
+                    See All
+                  </Text>
+                </TouchableOpacity>
+              )
+            }
+          />
+        }
       </View>
       <View className='absolute bottom-4 right-4'>
         <Link href='/addTransactions' className='bg-[#06D6A0] border border-[#D9E3E8] rounded-full p-3'>

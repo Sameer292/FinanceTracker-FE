@@ -1,9 +1,10 @@
 import { Feather } from "@expo/vector-icons";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Icon from "react-native-remix-icon";
 import { Dialog } from "heroui-native";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { BlurView } from 'expo-blur';
+import { IconName } from "react-native-remix-icon";
 
 export function ItemsSelect({ items, selectedItems, setSelectedItems, ToggleItem, selectAll, removeAll, itemslength, title }: CategorySelectProps) {
 
@@ -75,7 +76,7 @@ export function ItemsSelect({ items, selectedItems, setSelectedItems, ToggleItem
                     style={{ backgroundColor: `${item.color}20` }}
                     className="size-11 rounded-full items-center justify-center"
                   >
-                    <MaterialIcons name={item.icon as any} size={20} color={item.color} />
+                    <Icon name={item.icon as IconName} size={20} color={item.color} />
                   </View>
                   }
                   {/* Label */}
@@ -90,7 +91,7 @@ export function ItemsSelect({ items, selectedItems, setSelectedItems, ToggleItem
                     ${isChecked ? "bg-[#15c34f] border-0" : "border-gray-300 border"} 
                     flex justify-center items-center
                       `}>
-                    <MaterialIcons name={'check'} className=' font-bold self-center text-900' size={15} color={'white'} />
+                    <Icon name={'check-line'} className=' font-bold self-center text-900' size={15} color={'white'} />
                   </View>
                 </Pressable>
               );

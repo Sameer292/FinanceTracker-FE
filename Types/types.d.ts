@@ -41,6 +41,7 @@ type Category = {
   icon: string;
 }
 
+type createCategory = Omit<Category, 'id'>
 
 type TransactionCardType = {
   note: string,

@@ -1,13 +1,14 @@
-import { MaterialIcons } from '@expo/vector-icons'
 import { Link, useRouter } from 'expo-router'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native'
 import { useQuery } from '@tanstack/react-query'
 import { getCategories } from 'app/lib/ApiCalls'
 import Icon from 'react-native-remix-icon'
+import { isValidIcon } from 'app/lib/utilityFns'
+import { ListSkeleton } from 'app/components/ListSkeleton'
 
-export default function categories() {
-    const { data: Categories, isLoading, error } = useQuery<{ categories: Category[] }>({
+export default function Categories() {
+    const { data: Categories, isLoading, error, refetch, isFetching } = useQuery<{ categories: Category[] }>({
         queryKey: ['categories'],
         queryFn: getCategories,
     })
@@ -16,9 +17,15 @@ export default function categories() {
     const handleClick = (id: number) => {
         router.push(`/byCategories/${id}`)
     }
-    const filteredCategories = Categories?.categories.filter((category) =>
-        category.name.toLowerCase().includes(searchText.toLowerCase())
-    )
+    const filteredCategories = useMemo(() => {
+        if (!Categories?.categories) return []
+        return Categories.categories.filter(c =>
+            c.name.toLowerCase().includes(searchText.toLowerCase())
+        )
+    }, [Categories, searchText])
+console.log({error})
+    const isInitialLoading = isLoading && !Categories
+
     return (
         <View className='flex-1 px-4 gap-4 pt-5 bg-white '>
             {/* Header */}
@@ -26,7 +33,7 @@ export default function categories() {
                 <View className='w-full gap-2 flex-row items-center'>
                     <Pressable onPress={() => router.back()}>
                         <Text className='font-semibold text-xl text-[#13EC5B]'>
-                            <MaterialIcons name={'chevron-left'} size={35} color={'#000'} />
+                            <Icon name={'arrow-left-s-line'} size={35} color={'#000'} />
                         </Text>
                     </Pressable>
                     <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-xl'>Categories</Text>
@@ -44,35 +51,46 @@ export default function categories() {
             </View>
             {/* Body */}
             <View className='gap-4 flex-1'>
-                {
-                    isLoading && (
-                        <Text className='text-center mt-10'>Loading categories…</Text>
-                    )
-                }
+                {isInitialLoading && (
+                    <View className="gap-4 mt-4">
+                        {Array.from({ length: 7 }).map((_, i) => (
+                            <ListSkeleton key={i} />
+                        ))}
+                    </View>
+                )}
+
+                {error && (
+                    <View className="items-center gap-2 mt-10">
+                        <Text>Failed to load categories</Text>
+                        <Pressable onPress={() => refetch()}>
+                            <Text className="text-[#06D6A0]">Tap to retry</Text>
+                        </Pressable>
+                    </View>
+                )}
 
                 {
-                    error && (
-                        <Text className='text-center mt-10'>Something exploded 💥</Text>
-                    )
-                }
-
-                {
-                    !isLoading && !error && (
+                    !isInitialLoading && !error && (
                         <FlatList
-                            data={filteredCategories as Category[]}
-                            contentContainerClassName='gap-4 flex-1 items-center '
-                            bounces
+                            data={filteredCategories ?? []}
+                            keyExtractor={(item) => item.id.toString()}
+                            refreshing={isFetching}
+                            onRefresh={refetch}
+                            showsVerticalScrollIndicator={false}
+                            contentContainerClassName='gap-4 pb-20'
                             renderItem={({ item }) => (
                                 <Pressable onPress={() => handleClick(item.id)} className='justify-center w-full items-center gap-4 flex-row py-4 px-3 border border-[#D9E3E8] rounded-2xl'>
-                                    <View style={{ backgroundColor: item.color, borderRadius: 30 }} className={`size-15 justify-center items-center`} >
-                                        <MaterialIcons name={item.icon as any} size={24} color={'white'} />
-                                        {/* <Icon name={item.icon as IconName} size={24} color="white"/> */}
+                                    <View style={{ backgroundColor: item.color, borderRadius: '100%' }} className={`size-15 justify-center items-center`} >
+                                        <Icon
+                                            name={isValidIcon(item.icon) ? item.icon : 'question-mark'}
+                                            size={24}
+                                            color="white"
+                                        />
                                     </View>
                                     <View className='flex-row justify-between items-center flex-1'>
                                         <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-lg text-[#37474F]'>
                                             {item.name}
                                         </Text>
-                                        <MaterialIcons name='chevron-right' color='#6B7280' size={35} />
+                                        <Icon name='arrow-right-s-line' color='#6B7280' size={35} />
                                     </View>
                                 </Pressable>
                             )}
@@ -95,12 +113,19 @@ export default function categories() {
                                     </View>
                                 }
                             }}
+                            ListFooterComponent={
+                                isFetching ? (
+                                    <Text className="text-center text-[#8395A7] mt-4">
+                                        Refreshing…
+                                    </Text>
+                                ) : null
+                            }
                         />
                     )
                 }
             </View>
             <View className='absolute bottom-14 right-4'>
-                <Link href='/addTransactions' className='bg-[#06D6A0] border border-[#D9E3E8] rounded-full p-3'>
+                <Link href='/addCategories' className='bg-[#06D6A0] border border-[#D9E3E8] rounded-full p-3'>
                     <Icon name='add-line' color='white' size={24} />
                 </Link>
             </View>

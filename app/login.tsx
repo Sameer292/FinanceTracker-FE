@@ -4,11 +4,11 @@ import { useAuth } from 'app/context/AuthContext'
 import { Link } from 'expo-router'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { KeyboardAvoidingView, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
+import { ActivityIndicator, KeyboardAvoidingView, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import Icon from 'react-native-remix-icon'
 import { z } from 'zod'
 export default function login() {
-  const {  login } = useAuth()
+  const { login, isLoading } = useAuth()
 
   const loginSchema = z.object({
     email: z.email({ error: "Email is required" }),
@@ -54,7 +54,7 @@ export default function login() {
                 control={methods.control}
                 name='email'
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput placeholder='Email' value={value} onChangeText={onChange} style={{ fontFamily: 'Nunito_400Regular' }} onBlur={onBlur} placeholderTextColor={'#8395A7'} className='h-10 border border-[#D9E3E8] text-[#37474F] text-sm rounded-lg px-4 py-2.5' />
+                  <TextInput placeholder='Email' value={value} keyboardType='email-address' autoCapitalize='none' onChangeText={onChange} style={{ fontFamily: 'Nunito_400Regular' }} onBlur={onBlur} placeholderTextColor={'#8395A7'} className='h-10 border border-[#D9E3E8] text-[#37474F] text-sm rounded-lg px-4 py-2.5' />
                 )}
               />
               {
@@ -82,10 +82,17 @@ export default function login() {
                 )
               }
             </View>
-            <Pressable disabled={!methods.formState.isValid} onPress={methods.handleSubmit(onSubmit)} className='bg-[#06D6A0] h-10 justify-center items-center rounded-xl'>
-              <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-lg text-white' >
-                Login
-              </Text>
+            <Pressable disabled={!methods.formState.isValid || isLoading} onPress={methods.handleSubmit(onSubmit)} className='bg-[#06D6A0] h-10 justify-center items-center rounded-xl'>
+              {
+                isLoading ?
+                  (
+                    <ActivityIndicator size='small' color='white' />
+                  )
+                  :
+                  (<Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-lg text-white' >
+                    Login
+                  </Text>)
+              }
             </Pressable>
             <View className='flex flex-row gap-1 items-center justify-center' >
               <Text style={{ fontFamily: 'Nunito_400Regular' }} className='text-[#8395A7] text-sm'>Don't have an account?</Text>

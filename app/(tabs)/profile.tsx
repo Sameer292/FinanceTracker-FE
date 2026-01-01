@@ -1,23 +1,18 @@
-import { MaterialIcons } from '@expo/vector-icons'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useAuth } from 'app/context/AuthContext'
 import { Link } from 'expo-router'
 import React from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import Icon from 'react-native-remix-icon'
 
 export default function profile() {
-  const { user: me, setAuthStatus } = useAuth()
-  const logout = async () => {
-    await AsyncStorage.removeItem("accessToken")
-    setAuthStatus("unauthenticated")
-  }
+  const { user: me, logout } = useAuth()
   return (
     <View className='flex h-full justify-center gap-12 px-4 items-center ' >
       {/* Header */}
       <View className='flex relative justify-center w-full px-4 items-center' >
         <Text className='text-2xl font-bold'>Profile</Text>
         <View className='absolute left-0'>
-          {/* <MaterialIcons name={'chevron-left'} size={35} color={'#000'} /> */}
+          {/* <Icon name={'chevron-left'} size={35} color={'#000'} /> */}
         </View>
       </View>
       {/* Body */}
@@ -43,29 +38,29 @@ export default function profile() {
               <View className='w-full shadow-[0_3px_7px_rgb(0,0,0,0.1)] bg-white rounded-2xl'>
                 <View className='flex px-4 py-5 border-b gap-4 border-b-[#F5F5F4] flex-row items-center'>
                   <View>
-                    <MaterialIcons name={'person-outline'} color={'#13EC5B'} size={25} />
+                    <Icon name={'user-line'} color={'#13EC5B'} size={25} />
                   </View>
                   <View className='flex flex-row items-center justify-between flex-1'>
                     <Text className='text-xl font-medium text-[#292524]' >Edit Profile</Text>
-                    <MaterialIcons name={'chevron-right'} size={25} />
+                    <Icon name={'arrow-right-s-line'} size={25} />
                   </View>
                 </View>
                 <View className='flex px-4 py-5 border-b gap-4 border-b-[#F5F5F4] flex-row items-center'>
                   <View>
-                    <MaterialIcons name={'lock-outline'} color={'#13EC5B'} size={25} />
+                    <Icon name={'lock-password-line'} color={'#13EC5B'} size={25} />
                   </View>
                   <View className='flex flex-row items-center justify-between flex-1'>
                     <Text className='text-xl font-medium text-[#292524]' >Change Password</Text>
-                    <MaterialIcons name={'chevron-right'} size={25} />
+                    <Icon name={'arrow-right-s-line'} size={25} />
                   </View>
                 </View>
                 <View className='flex px-4 py-5 border-b gap-4 border-b-[#F5F5F4] flex-row items-center'>
                   <View>
-                    <MaterialIcons name={'payments'} color={'#13EC5B'} size={25} />
+                    <Icon name={'currency-line'} color={'#13EC5B'} size={25} />
                   </View>
                   <View className='flex flex-row items-center justify-between flex-1'>
                     <Text className='text-xl font-medium text-[#292524]' >Currency</Text>
-                    <MaterialIcons name={'chevron-right'} size={25} />
+                    <Icon name={'arrow-right-s-line'} size={25} />
                   </View>
                 </View>
               </View>
@@ -73,12 +68,12 @@ export default function profile() {
             {/* Categories */}
             <View className=' rounded-2xl bg-white flex px-4 shadow-[0_3px_7px_rgb(0,0,0,0.1)] py-5 gap-4 flex-row items-center'>
               <View>
-                <MaterialIcons name={'category'} color={'#13EC5B'} size={25} />
+                <Icon name={'box-2-line'} color={'#13EC5B'} size={25} />
               </View>
               <Link href={'/categories'} className='flex-1'>
                 <View className='flex w-full flex-row items-center justify-between flex-1'>
                   <Text className='text-xl font-medium text-[#292524]'>Categories</Text>
-                  <MaterialIcons name={'chevron-right'} size={25} />
+                  <Icon name={'arrow-right-s-line'} size={25} />
                 </View>
               </Link>
             </View>

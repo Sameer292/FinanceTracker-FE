@@ -24,3 +24,8 @@ export const getRecentTransactions = async () => {
     const res = await apiClient.get('/transactions/recent');
     return res.data
 }
+
+export const addCategory = async (data: createCategory) => {
+    const res = await apiClient.post('/categories', data)
+    return res.data
+}

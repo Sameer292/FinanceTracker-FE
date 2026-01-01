@@ -1,11 +1,11 @@
-import { MaterialIcons } from '@expo/vector-icons'
+import Icon from 'react-native-remix-icon'
 import { router } from 'expo-router'
 import { Dialog } from 'heroui-native'
 import React from 'react'
 import { Pressable, ScrollView, Text, TextInput, View, KeyboardAvoidingView } from 'react-native'
 import { DatePickerModal } from 'react-native-paper-dates';
 import apiClient from 'app/lib/api'
-import { useQuery,  } from '@tanstack/react-query'
+import { useQuery, useQueryClient, } from '@tanstack/react-query'
 import { getCategories } from 'app/lib/ApiCalls'
 import { toast } from 'sonner-native'
 
@@ -16,30 +16,37 @@ export default function transactions() {
   const [selectedDate, setSelectedDate] = React.useState<Date>(new Date())
   const [selectedAmount, setSelectedAmount] = React.useState<string>('')
   const [note, setNote] = React.useState<string>('')
-  const { data: categories, isLoading, error } = useQuery<{ categories: Category[] }>({
+  const { data: categories, isLoading } = useQuery<{ categories: Category[] }>({
     queryKey: ['categories'],
     queryFn: getCategories,
   })
+  const client = useQueryClient()
   const handleSubmit = async () => {
     const date = selectedDate.toISOString().split('T')[0]
-    try{
+    try {
       const res = await apiClient.post('/transactions', {
-      transaction_type: selectedType,
-      category_id: selectedCategoryId,
-      transaction_date: date,
-      amount: Number(selectedAmount),
-      note
-    })
-    if(res.status === 200 && res.data.message.includes('transaction added') && res.data.id){
-      toast.success('Transaction added successfully',{
-        richColors:true,
-        duration:2000
+        transaction_type: selectedType,
+        category_id: selectedCategoryId,
+        transaction_date: date,
+        amount: Number(selectedAmount),
+        note
       })
-      router.back()
+      if (res.status === 200 && res.data.message.includes('transaction added') && res.data.id) {
+        toast.success('Transaction added successfully', {
+          richColors: true,
+          duration: 2000
+        })
+        // client.invalidateQueries({queryKey: ['recentTransactions']})
+        // onSuccess: () => {
+        client.invalidateQueries({ queryKey: ['me'] })
+        client.invalidateQueries({ queryKey: ['recentTransactions'] })
+        // }
+
+        router.back()
+      }
+    } catch (err) {
+      toast.error('Failed to add transaction')
     }
-  }catch(err){
-    toast.error('Failed to add transaction')
-  }
   }
   return (
     <KeyboardAvoidingView behavior='padding' className='flex-1'>
@@ -51,7 +58,7 @@ export default function transactions() {
             <Text className='text-2xl font-semibold'>Add Transaction</Text>
             <Pressable className='absolute left-0' onPress={() => router.back()}>
               <Text className='font-semibold text-xl text-[#13EC5B]'>
-                <MaterialIcons name={'chevron-left'} size={35} color={'#000'} />
+                <Icon name={'arrow-left-s-line'} size={35} color={'#000'} />
               </Text>
             </Pressable>
           </View>
@@ -91,7 +98,7 @@ export default function transactions() {
               <Pressable onPress={() => setIsSelectingDate(true)} className='justify-between bg-white rounded-2xl shadow-[0_3px_5px_rgb(0,0,0,0.1)] flex flex-row px-4 h-20 items-center'>
                 <View className='flex-row gap-4 items-center'>
                   <View className='bg-[#D0FBDE] justify-center items-center size-12 shadow-[0_3px_2px_rgb(0,0,0,0.1)] rounded-lg'>
-                    <MaterialIcons name='calendar-month' size={25} />
+                    <Icon name='calendar-2-line' size={25} />
                   </View>
                   <Text className='text-lg font-semibold'>
                     Date
@@ -101,7 +108,7 @@ export default function transactions() {
                   <Text className='text-[#94A3B8] text-lg font-semibold'>
                     Today
                   </Text>
-                  <MaterialIcons size={35} color={'#94A3B8'} name={'chevron-right'} />
+                  <Icon size={35} color={'#94A3B8'} name={'arrow-right-s-line'} />
                 </View>
               </Pressable>
               <DatePickerModal
@@ -117,7 +124,7 @@ export default function transactions() {
               <View className='justify-between bg-white rounded-2xl shadow-[0_3px_5px_rgb(0,0,0,0.1)] flex flex-row px-4 h-fit items-center'>
                 <View className='flex-row pt-4 gap-2 '>
                   <View className='bg-[#D0FBDE] justify-center items-center size-12 shadow-[0_3px_2px_rgb(0,0,0,0.1)] rounded-lg'>
-                    <MaterialIcons name='description' size={25} />
+                    <Icon name='file-text-line' size={25} />
                   </View>
                   <TextInput
                     placeholder="Add a note..."
@@ -154,7 +161,7 @@ const CategorySelector = ({ selectedCategoryId, ToggleItem, categories, isLoadin
         <View className='justify-between  bg-white rounded-2xl shadow-[0_3px_5px_rgb(0,0,0,0.1)] flex flex-row px-4 h-20 items-center'>
           <View className='flex-row gap-4 items-center'>
             <View className='bg-[#D0FBDE] justify-center items-center size-12 shadow-[0_3px_2px_rgb(0,0,0,0.1)] rounded-lg'>
-              <MaterialIcons name='label' size={25} />
+              <Icon name='box-2-line' size={25} />
             </View>
             <Text className='text-lg font-semibold'>
               Category
@@ -167,7 +174,7 @@ const CategorySelector = ({ selectedCategoryId, ToggleItem, categories, isLoadin
                 categories?.find((category) => category.id === selectedCategoryId)?.name
               }
             </Text>
-            <MaterialIcons size={35} color={'#94A3B8'} name={'chevron-right'} />
+            <Icon size={35} color={'#94A3B8'} name={'arrow-right-s-line'} />
           </View>
         </View>
       </Dialog.Trigger>
@@ -209,7 +216,7 @@ const CategorySelector = ({ selectedCategoryId, ToggleItem, categories, isLoadin
                       style={{ backgroundColor: `${category.color}20` }}
                       className="size-11 rounded-full items-center justify-center"
                     >
-                      <MaterialIcons name={category.icon as any} size={20} color={category.color} />
+                      <Icon name={category.icon as any} size={20} color={category.color} />
                     </View>
 
                     {/* Label */}
@@ -224,7 +231,7 @@ const CategorySelector = ({ selectedCategoryId, ToggleItem, categories, isLoadin
                     ${isChecked ? "bg-[#15c34f] border-0" : "border-gray-300 border"} 
                     flex justify-center items-center
                       `}>
-                      <MaterialIcons name={'check'} className=' font-bold self-center text-900' size={15} color={'white'} />
+                      <Icon name={'check-line'} className=' font-bold self-center text-900' size={15} color={'white'} />
                     </View>
                   </Pressable>
                 );
