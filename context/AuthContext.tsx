@@ -13,6 +13,7 @@ type AuthContextType = {
   logout: () => void
   register: (data: RegisterInput) => void
   isLoading: boolean
+  isLoginError: boolean
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType)
@@ -93,6 +94,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         logout,
         register: registerMutation.mutate,
         isLoading: loginMutation.isPending,
+        isLoginError: loginMutation.isError,
       }}
     >
       {children}

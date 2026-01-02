@@ -6,16 +6,10 @@ import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { ActivityIndicator, KeyboardAvoidingView, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import Icon from 'react-native-remix-icon'
-import { z } from 'zod'
+import { loginSchema, loginSchemaType } from 'app/lib/schemas/validationSchemas'
+
 export default function login() {
-  const { login, isLoading } = useAuth()
-
-  const loginSchema = z.object({
-    email: z.email({ error: "Email is required" }),
-    password: z.string().nonempty({ error: "Password is required" })
-  })
-
-  type loginSchemaType = z.infer<typeof loginSchema>
+  const { login, isLoading, isLoginError } = useAuth()
 
   const methods = useForm<loginSchemaType>({
     defaultValues: {
@@ -48,13 +42,25 @@ export default function login() {
               </Text>
             </View>
           </View>
-          <View className='w-full gap-6'>
-            <View className='gap-4 '>
+          <View className='w-full gap-5'>
+            <View className='gap-2'>
+              <Text style={{ fontFamily: 'Nunito_500Medium' }} className='text-lg text-[#1E1E1E]' >
+                Email
+              </Text>
               <Controller
                 control={methods.control}
                 name='email'
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput placeholder='Email' value={value} keyboardType='email-address' autoCapitalize='none' onChangeText={onChange} style={{ fontFamily: 'Nunito_400Regular' }} onBlur={onBlur} placeholderTextColor={'#8395A7'} className='h-10 border border-[#D9E3E8] text-[#37474F] text-sm rounded-lg px-4 py-2.5' />
+                render={({ field }) => (
+                  <TextInput
+                    {...field}
+                    placeholder='Email'
+                    keyboardType='email-address'
+                    autoCapitalize='none'
+                    onChangeText={field.onChange}
+                    style={{ fontFamily: 'Nunito_400Regular' }}
+                    placeholderTextColor={'#8395A7'}
+                    className={`h-13 border ${isLoginError ?  "border-[#EF476F]" : "border-[#D9E3E8]"}  text-[#37474F] text-lg rounded-lg px-4 py-2.5`}
+                  />
                 )}
               />
               {
@@ -65,15 +71,29 @@ export default function login() {
                 )
               }
             </View>
-            <View className='gap-4 flex-row items-center border-[#D9E3E8] border rounded-lg px-4'>
-              <Controller
-                control={methods.control}
-                name='password'
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput onChangeText={onChange} value={value} onBlur={onBlur} secureTextEntry={!isPasswordVisible} placeholder='Password' returnKeyType='send' placeholderTextColor={'#8395A7'} style={{ fontFamily: 'Nunito_400Regular' }} className='flex-1 h-10 text-[#37474F] text-sm rounded-lg py-2.5' />
-                )}
-              />
-              <Icon onPress={() => setIsPasswordVisible(!isPasswordVisible)} name={isPasswordVisible ? 'eye-off-line' : 'eye-line'} size={27} color='#D9E3E8' />
+            <View className='gap-2'>
+              <Text style={{ fontFamily: 'Nunito_500Medium' }} className='text-lg text-[#1E1E1E]' >
+                Password
+              </Text>
+              <View className={`flex-row items-center ${isLoginError ?  "border-[#EF476F]" : "border-[#D9E3E8]"} border rounded-lg pr-2`}>
+                <Controller
+                  control={methods.control}
+                  name='password'
+                  render={({ field }) => (
+                    <TextInput
+                      {...field}
+                      onChangeText={field.onChange}
+                      secureTextEntry={!isPasswordVisible} 
+                      placeholder='Password' 
+                      returnKeyType='send' 
+                      placeholderTextColor={'#8395A7'} 
+                      style={{ fontFamily: 'Nunito_400Regular' }} 
+                      className='flex-1 h-13 text-[#37474F] text-lg rounded-lg pl-4 py-2.5' 
+                      />
+                  )}
+                />
+                <Icon onPress={() => setIsPasswordVisible(!isPasswordVisible)} name={isPasswordVisible ? 'eye-off-line' : 'eye-line'} size={27} color='#8395A7' />
+              </View>
               {
                 methods.formState.errors.password && (
                   <Text className='text-red-500'>
@@ -82,7 +102,7 @@ export default function login() {
                 )
               }
             </View>
-            <Pressable disabled={!methods.formState.isValid || isLoading} onPress={methods.handleSubmit(onSubmit)} className='bg-[#06D6A0] h-10 justify-center items-center rounded-xl'>
+            <Pressable disabled={!methods.formState.isValid || isLoading} onPress={methods.handleSubmit(onSubmit)} className='bg-[#06D6A0] h-12 justify-center items-center rounded-xl'>
               {
                 isLoading ?
                   (
@@ -95,9 +115,9 @@ export default function login() {
               }
             </Pressable>
             <View className='flex flex-row gap-1 items-center justify-center' >
-              <Text style={{ fontFamily: 'Nunito_400Regular' }} className='text-[#8395A7] text-sm'>Don't have an account?</Text>
+              <Text style={{ fontFamily: 'Nunito_400Regular' }} className='text-[#8395A7] text-md'>Don't have an account?</Text>
               <Link href={'/signup'}>
-                <Text className='text-[#06D6A0] text-sm'>
+                <Text className='text-[#06D6A0] text-md'>
                   Sign Up
                 </Text>
               </Link>
