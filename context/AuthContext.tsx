@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react"
+import React, { createContext, useContext, useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useRouter } from "expo-router"
@@ -75,16 +75,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     await AsyncStorage.removeItem("accessToken")
+    setAuthStatus("unauthenticated")
     queryClient.resetQueries({ queryKey: ["me"] })
   }
 
-  const authStatus: AuthContextType["authStatus"] =
-    isLoading 
+  const [authStatus, setAuthStatus] = useState<AuthContextType["authStatus"]>(() => {
+    return isLoading
       ? "loading"
       : user
         ? "authenticated"
         : "unauthenticated"
+  })
 
+  useEffect(() => {
+    setAuthStatus(() => {
+      return isLoading
+        ? "loading"
+        : user
+          ? "authenticated"
+          : "unauthenticated"
+    })
+  }, [isLoading, user])
+ 
   return (
     <AuthContext.Provider
       value={{

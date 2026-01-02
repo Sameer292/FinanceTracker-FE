@@ -39,17 +39,17 @@ export default function signup() {
             </View>
             <View className='items-center gap-1'>
 
-              <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-4xl text-[#073B4C]' >
+              <Text className='font-nunito-bold text-4xl text-[#073B4C]' >
                 Sign up to Expensia
               </Text>
-              <Text style={{ fontFamily: 'Nunito_400Regular' }} className='text-center text-[#8395A7]' >
+              <Text className='font-nunito-regular text-center text-[#8395A7]' >
                 Your personal finance dashboard starts here.
               </Text>
             </View>
           </View>
           <View className='w-full gap-5'>
             <View className='gap-2'>
-              <Text style={{ fontFamily: 'Nunito_500Medium' }} className='text-lg text-[#1E1E1E]' >
+              <Text className='font-nunito-medium text-lg text-[#1E1E1E]' >
                 Name
               </Text>
               <Controller
@@ -60,9 +60,8 @@ export default function signup() {
                     {...field}
                     placeholder='Enter your full name'
                     onChangeText={field.onChange}
-                    style={{ fontFamily: 'Nunito_400Regular' }}
                     placeholderTextColor={'#8395A7'}
-                    className={`h-13 border ${methods.formState.errors.name ? "border-[#EF476F]" : "border-[#D9E3E8]"}  text-[#37474F] text-lg rounded-lg px-4 py-2.5`}
+                    className={`h-13 font-nunito-regular border ${methods.formState.errors.name ? "border-[#EF476F]" : "border-[#D9E3E8]"}  text-[#37474F] text-lg rounded-lg px-4 py-2.5`}
                   />
                 )}
               />
@@ -75,7 +74,7 @@ export default function signup() {
               }
             </View>
             <View className='gap-2'>
-              <Text style={{ fontFamily: 'Nunito_500Medium' }} className='text-lg text-[#1E1E1E]' >
+              <Text className='font-nunito-medium text-lg text-[#1E1E1E]' >
                 Email
               </Text>
               <Controller
@@ -88,9 +87,8 @@ export default function signup() {
                     keyboardType='email-address'
                     autoCapitalize='none'
                     onChangeText={field.onChange}
-                    style={{ fontFamily: 'Nunito_400Regular' }}
                     placeholderTextColor={'#8395A7'}
-                    className={`h-13 border ${methods.formState.errors.email ? "border-[#EF476F]" : "border-[#D9E3E8]"} text-[#37474F] text-lg rounded-lg px-4 py-2.5`}
+                    className={`h-13 font-nunito-regular border ${methods.formState.errors.email ? "border-[#EF476F]" : "border-[#D9E3E8]"} text-[#37474F] text-lg rounded-lg px-4 py-2.5`}
                   />
                 )}
               />
@@ -103,7 +101,7 @@ export default function signup() {
               }
             </View>
             <View className='gap-2'>
-              <Text style={{ fontFamily: 'Nunito_500Medium' }} className='text-lg text-[#1E1E1E]' >
+              <Text className='font-nunito-medium text-lg text-[#1E1E1E]' >
                 Password
               </Text>
               <View className={`flex-row items-center ${methods.formState.errors.password ? "border-[#EF476F]" : "border-[#D9E3E8]"} border rounded-lg pr-2`}>
@@ -118,8 +116,7 @@ export default function signup() {
                       placeholder='Create a password'
                       returnKeyType='send'
                       placeholderTextColor={'#8395A7'}
-                      style={{ fontFamily: 'Nunito_400Regular' }}
-                      className='flex-1 h-13 text-[#37474F] text-lg rounded-lg pl-4 py-2.5'
+                      className='flex-1 font-nunito-regular h-13 text-[#37474F] text-lg rounded-lg pl-4 py-2.5'
                     />
                   )}
                 />
@@ -134,7 +131,7 @@ export default function signup() {
               }
             </View>
             <View className='gap-2'>
-              <Text style={{ fontFamily: 'Nunito_500Medium' }} className='text-lg text-[#1E1E1E]' >
+              <Text className='font-nunito-medium text-lg text-[#1E1E1E]' >
                 Confirm Password
               </Text>
               <View className={`flex-row items-center ${methods.formState.errors.confirmPassword ? "border-[#EF476F]" : "border-[#D9E3E8]"} border rounded-lg pr-2`}>
@@ -149,8 +146,7 @@ export default function signup() {
                       placeholder='Re-enter your password'
                       returnKeyType='send'
                       placeholderTextColor={'#8395A7'}
-                      style={{ fontFamily: 'Nunito_400Regular' }}
-                      className='flex-1 h-13 text-[#37474F] text-lg rounded-lg pl-4 py-2.5'
+                      className='flex-1 h-13 text-[#37474F] font-nunito-regular text-lg rounded-lg pl-4 py-2.5'
                     />
                   )}
                 />
@@ -165,12 +161,12 @@ export default function signup() {
               }
             </View>
             <Pressable disabled={!methods.formState.isValid} onPress={methods.handleSubmit(onSubmit)} className='bg-[#06D6A0] h-12 justify-center items-center rounded-xl'>
-              <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-lg text-white' >
+              <Text className='text-lg font-nunito-bold text-white' >
                 Sign Up
               </Text>
             </Pressable>
             <View className='flex flex-row gap-1 items-center justify-center' >
-              <Text style={{ fontFamily: 'Nunito_400Regular' }} className='text-[#8395A7] text-md'>Already registered?</Text>
+              <Text className='font-nunito-regular text-[#8395A7] text-md'>Already registered?</Text>
               <Link href={'/login'}>
                 <Text className='text-[#06D6A0] text-md'>
                   Login

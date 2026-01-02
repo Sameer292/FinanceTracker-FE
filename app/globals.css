@@ -3,6 +3,12 @@
 
 @import 'heroui-native/styles';
 
+@theme{
+    --font-nunito-bold: Nunito_700Bold;
+    --font-nunito-regular: Nunito_400Regular;
+    --font-nunito-semibold: Nunito_600SemiBold;
+    --font-nunito-medium: Nunito_500Medium;
+}
 @source './node_modules/heroui-native/lib';
 
 @source '../components/'

@@ -36,11 +36,11 @@ console.log({error})
                             <Icon name={'arrow-left-s-line'} size={35} color={'#000'} />
                         </Text>
                     </Pressable>
-                    <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-xl'>Categories</Text>
+                    <Text className='font-nunito-bold text-xl'>Categories</Text>
                 </View>
                 <View className='w-full flex-row items-center gap-2 border border-[#D9E3E8] rounded-lg  px-3'>
                     <Icon name='search-line' color='#8395A7' size={20} />
-                    <TextInput placeholderTextColor={'#8395A7'} value={searchText} style={{ fontFamily: 'Nunito_400Regular' }} onChangeText={setSearchText} placeholder='Search' className='flex-1 text-lg text-[#37474F]' />
+                    <TextInput placeholderTextColor={'#8395A7'} value={searchText} onChangeText={setSearchText} placeholder='Search' className='font-nunito-regular flex-1 text-lg text-[#37474F]' />
                     {
                         searchText.length > 0 &&
                         <Pressable onPress={() => setSearchText('')}>
@@ -87,7 +87,7 @@ console.log({error})
                                         />
                                     </View>
                                     <View className='flex-row justify-between items-center flex-1'>
-                                        <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-lg text-[#37474F]'>
+                                        <Text className='font-nunito-bold text-lg text-[#37474F]'>
                                             {item.name}
                                         </Text>
                                         <Icon name='arrow-right-s-line' color='#6B7280' size={35} />
@@ -98,16 +98,16 @@ console.log({error})
                                 if (Categories?.categories && Categories?.categories.length > 0 && filteredCategories?.length === 0 && searchText.length > 0) {
                                     return <View className='items-center gap-2 justify-center flex-1 -mt-50'>
                                         <Icon name='menu-search-fill' color='#06D6A0' size={24} />
-                                        <Text className='text-center text-xl' style={{ fontFamily: 'Nunito_600SemiBold' }}>No matches found.</Text>
-                                        <Text className='text-[#8395A7] text-lg text-center' style={{ fontFamily: 'Nunito_400Regular' }}>
+                                        <Text className='text-center text-xl font-nunito-semibold'>No matches found.</Text>
+                                        <Text className='text-[#8395A7] text-lg text-center font-nunito-regular'>
                                             We couldn't find anything for "{searchText}". Check your spelling or try a different category.
                                         </Text>
                                     </View>
                                 } else {
                                     return <View className='items-center gap-2 justify-center flex-1 -mt-50'>
                                         <Icon name='box-3-fill' color='#06D6A0' size={24} />
-                                        <Text className='text-center text-xl' style={{ fontFamily: 'Nunito_600SemiBold' }}>No categories yet.</Text>
-                                        <Text className='text-[#8395A7] text-lg text-center' style={{ fontFamily: 'Nunito_400Regular' }}>
+                                        <Text className='text-center text-xl font-nunito-semibold'>No categories yet.</Text>
+                                        <Text className='text-[#8395A7] text-lg text-center font-nunito-regular'>
                                             Create categories to organize your spending and see where your money goes.
                                         </Text>
                                     </View>

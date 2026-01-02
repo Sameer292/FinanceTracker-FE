@@ -70,8 +70,7 @@ export default function AddCategories() {
                     <Icon name="arrow-left-s-line" size={32} color="#444" />
                 </Pressable>
                 <Text
-                    className="text-xl"
-                    style={{ fontFamily: 'Nunito_700Bold' }}
+                    className="text-xl font-nunito-bold"
                 >
                     Add Category
                 </Text>
@@ -97,8 +96,7 @@ export default function AddCategories() {
                     <View className="gap-4 flex-1">
                         <View className="gap-2">
                             <Text
-                                className="text-lg"
-                                style={{ fontFamily: 'Nunito_500Medium' }}
+                                className="text-lg font-nunito-medium"
                             >
                                 Category Name
                             </Text>
@@ -116,7 +114,7 @@ export default function AddCategories() {
                             />
                             {
                                 errors.name && (
-                                    <Text className="text-[#EF476F] text-sm" style={{ fontFamily: 'Nunito_500Medium' }}>
+                                    <Text className="text-[#EF476F] text-sm font-nunito-medium">
                                         {errors.name.message}
                                     </Text>
                                 )
@@ -124,7 +122,7 @@ export default function AddCategories() {
                         </View>
 
                         <View className="gap-3">
-                            <Text className="text-lg" style={{ fontFamily: 'Nunito_500Medium' }}>Category Icon</Text>
+                            <Text className="text-lg font-nunito-medium">Category Icon</Text>
                             <Controller
                                 control={control}
                                 name="icon"
@@ -165,7 +163,7 @@ export default function AddCategories() {
                             ))}
                         </View>
                         <View className="gap-2">
-                            <Text style={{ fontFamily: 'Nunito_500Medium' }} className='text-lg'>
+                            <Text className='font-nunito-medium text-lg'>
                                 Category Color
                             </Text>
                             <Controller
@@ -208,8 +206,7 @@ export default function AddCategories() {
                 <View className='gap-2'>
                     {isError && (
                         <Text
-                            className="text-[#EF476F] text-sm text-center"
-                            style={{ fontFamily: 'Nunito_500Medium' }}
+                            className="text-[#EF476F] text-sm text-center font-nunito-medium"
                         >
                             {(error as Error)?.message || 'Something went wrong'}
                         </Text>
@@ -221,8 +218,7 @@ export default function AddCategories() {
                             }`}
                     >
                         <Text
-                            className="text-lg text-white"
-                            style={{ fontFamily: 'Nunito_700Bold' }}
+                            className="text-lg text-white font-nunito-bold"
                         >
                             {isPending ? 'Adding…' : 'Add Category'}
                         </Text>
@@ -231,7 +227,7 @@ export default function AddCategories() {
                         onPress={() => router.back()}
                         className={`h-14 border-2 border-[#118AB2] rounded-lg items-center justify-center`}
                     >
-                        <Text className="text-lg text-[#118AB2]" style={{ fontFamily: 'Nunito_600SemiBold' }}>Cancel</Text>
+                        <Text className="text-lg text-[#118AB2] font-nunito-semibold">Cancel</Text>
                     </Pressable>
                 </View>
             </View>

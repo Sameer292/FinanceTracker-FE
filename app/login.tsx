@@ -34,17 +34,17 @@ export default function login() {
             </View>
             <View className='items-center gap-1'>
 
-              <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-4xl text-[#073B4C]' >
+              <Text className='font-nunito-bold text-4xl text-[#073B4C]' >
                 Welcome back!
               </Text>
-              <Text style={{ fontFamily: 'Nunito_400Regular' }} className='text-center text-[#8395A7]' >
+              <Text className='font-nunito-regular text-center text-[#8395A7]' >
                 Login to access your personal expense dashboard.
               </Text>
             </View>
           </View>
           <View className='w-full gap-5'>
             <View className='gap-2'>
-              <Text style={{ fontFamily: 'Nunito_500Medium' }} className='text-lg text-[#1E1E1E]' >
+              <Text className='font-nunito-medium text-lg text-[#1E1E1E]' >
                 Email
               </Text>
               <Controller
@@ -57,9 +57,8 @@ export default function login() {
                     keyboardType='email-address'
                     autoCapitalize='none'
                     onChangeText={field.onChange}
-                    style={{ fontFamily: 'Nunito_400Regular' }}
                     placeholderTextColor={'#8395A7'}
-                    className={`h-13 border ${isLoginError ?  "border-[#EF476F]" : "border-[#D9E3E8]"}  text-[#37474F] text-lg rounded-lg px-4 py-2.5`}
+                    className={`h-13 font-nunito-regular border ${isLoginError ?  "border-[#EF476F]" : "border-[#D9E3E8]"}  text-[#37474F] text-lg rounded-lg px-4 py-2.5`}
                   />
                 )}
               />
@@ -72,7 +71,7 @@ export default function login() {
               }
             </View>
             <View className='gap-2'>
-              <Text style={{ fontFamily: 'Nunito_500Medium' }} className='text-lg text-[#1E1E1E]' >
+              <Text className='font-nunito-medium text-lg text-[#1E1E1E]' >
                 Password
               </Text>
               <View className={`flex-row items-center ${isLoginError ?  "border-[#EF476F]" : "border-[#D9E3E8]"} border rounded-lg pr-2`}>
@@ -87,8 +86,7 @@ export default function login() {
                       placeholder='Password' 
                       returnKeyType='send' 
                       placeholderTextColor={'#8395A7'} 
-                      style={{ fontFamily: 'Nunito_400Regular' }} 
-                      className='flex-1 h-13 text-[#37474F] text-lg rounded-lg pl-4 py-2.5' 
+                      className='flex-1 h-13 text-[#37474F] font-nunito-regular text-lg rounded-lg pl-4 py-2.5' 
                       />
                   )}
                 />
@@ -109,13 +107,13 @@ export default function login() {
                     <ActivityIndicator size='small' color='white' />
                   )
                   :
-                  (<Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-lg text-white' >
+                  (<Text className='font-nunito-bold text-lg text-white' >
                     Login
                   </Text>)
               }
             </Pressable>
             <View className='flex flex-row gap-1 items-center justify-center' >
-              <Text style={{ fontFamily: 'Nunito_400Regular' }} className='text-[#8395A7] text-md'>Don't have an account?</Text>
+              <Text className='font-nunito-regular text-[#8395A7] text-md'>Don't have an account?</Text>
               <Link href={'/signup'}>
                 <Text className='text-[#06D6A0] text-md'>
                   Sign Up
