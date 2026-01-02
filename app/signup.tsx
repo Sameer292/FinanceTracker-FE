@@ -4,22 +4,13 @@ import { useAuth } from 'app/context/AuthContext'
 import { Link } from 'expo-router'
 import { Controller, useForm } from 'react-hook-form'
 import { KeyboardAvoidingView, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
-import z from 'zod'
 import Icon from 'react-native-remix-icon'
 import { useState } from 'react'
+import { registerSchema, registerSchemaType } from 'app/lib/schemas/validationSchemas'
 
 export default function signup() {
   const { register } = useAuth()
-  const registerSchema = z.object({
-    name: z.string().min(1, { error: "Name is required" }),
-    email: z.email({ error: "Email is required" }),
-    password: z.string().min(1, { error: "Password is required" }),
-    confirmPassword: z.string().min(1, { error: "Password is required" })
-  }).refine(data => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"]
-  })
-  type registerSchemaType = z.infer<typeof registerSchema>
+
   const methods = useForm<registerSchemaType>({
     defaultValues: {
       name: '',
@@ -27,7 +18,7 @@ export default function signup() {
       password: '',
       confirmPassword: ''
     },
-    mode: 'onSubmit',
+    mode: 'onChange',
     resolver: zodResolver(registerSchema)
   })
   const onSubmit = async (data: registerSchemaType) => {
@@ -56,82 +47,132 @@ export default function signup() {
               </Text>
             </View>
           </View>
-          <View className='w-full gap-6'>
-            <View className='gap-4 '>
+          <View className='w-full gap-5'>
+            <View className='gap-2'>
+              <Text style={{ fontFamily: 'Nunito_500Medium' }} className='text-lg text-[#1E1E1E]' >
+                Name
+              </Text>
               <Controller
                 control={methods.control}
                 name='name'
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput placeholder='Enter your full name' value={value} onChangeText={onChange} style={{ fontFamily: 'Nunito_400Regular' }} onBlur={onBlur} placeholderTextColor={'#8395A7'} className='h-10 border border-[#D9E3E8] text-[#37474F] text-sm rounded-lg px-4 py-2.5' />
+                render={({ field }) => (
+                  <TextInput
+                    {...field}
+                    placeholder='Enter your full name'
+                    onChangeText={field.onChange}
+                    style={{ fontFamily: 'Nunito_400Regular' }}
+                    placeholderTextColor={'#8395A7'}
+                    className={`h-13 border ${methods.formState.errors.name ? "border-[#EF476F]" : "border-[#D9E3E8]"}  text-[#37474F] text-lg rounded-lg px-4 py-2.5`}
+                  />
                 )}
               />
               {
                 methods.formState.errors.name && (
-                  <Text className='text-red-500' >
+                  <Text className='text-[#EF476F]' >
                     {methods.formState.errors.name.message}
                   </Text>
                 )
               }
             </View>
-            <View className='gap-4 '>
+            <View className='gap-2'>
+              <Text style={{ fontFamily: 'Nunito_500Medium' }} className='text-lg text-[#1E1E1E]' >
+                Email
+              </Text>
               <Controller
                 control={methods.control}
                 name='email'
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput placeholder='Enter your email address' value={value} keyboardType='email-address' onChangeText={onChange} style={{ fontFamily: 'Nunito_400Regular' }} onBlur={onBlur} placeholderTextColor={'#8395A7'} className='h-10 border border-[#D9E3E8] text-[#37474F] text-sm rounded-lg px-4 py-2.5' />
+                render={({ field }) => (
+                  <TextInput
+                    {...field}
+                    placeholder='Email'
+                    keyboardType='email-address'
+                    autoCapitalize='none'
+                    onChangeText={field.onChange}
+                    style={{ fontFamily: 'Nunito_400Regular' }}
+                    placeholderTextColor={'#8395A7'}
+                    className={`h-13 border ${methods.formState.errors.email ? "border-[#EF476F]" : "border-[#D9E3E8]"} text-[#37474F] text-lg rounded-lg px-4 py-2.5`}
+                  />
                 )}
               />
               {
                 methods.formState.errors.email && (
-                  <Text className='text-red-500' >
+                  <Text className='text-[#EF476F]' >
                     {methods.formState.errors.email.message}
                   </Text>
                 )
               }
             </View>
-            <View className='gap-4 flex-row items-center border-[#D9E3E8] border rounded-lg px-4'>
-              <Controller
-                control={methods.control}
-                name='password'
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput onChangeText={onChange} value={value} onBlur={onBlur} secureTextEntry={!isPasswordVisible} placeholder='Create a password' returnKeyType='send' placeholderTextColor={'#8395A7'} style={{ fontFamily: 'Nunito_400Regular' }} className='flex-1 h-10 text-[#37474F] text-sm rounded-lg py-2.5' />
-                )}
-              />
-              <Icon onPress={() => setIsPasswordVisible(!isPasswordVisible)} name={isPasswordVisible ? 'eye-off-line' : 'eye-line'} size={27} color='#D9E3E8' />
+            <View className='gap-2'>
+              <Text style={{ fontFamily: 'Nunito_500Medium' }} className='text-lg text-[#1E1E1E]' >
+                Password
+              </Text>
+              <View className={`flex-row items-center ${methods.formState.errors.password ? "border-[#EF476F]" : "border-[#D9E3E8]"} border rounded-lg pr-2`}>
+                <Controller
+                  control={methods.control}
+                  name='password'
+                  render={({ field }) => (
+                    <TextInput
+                      {...field}
+                      onChangeText={field.onChange}
+                      secureTextEntry={!isPasswordVisible}
+                      placeholder='Create a password'
+                      returnKeyType='send'
+                      placeholderTextColor={'#8395A7'}
+                      style={{ fontFamily: 'Nunito_400Regular' }}
+                      className='flex-1 h-13 text-[#37474F] text-lg rounded-lg pl-4 py-2.5'
+                    />
+                  )}
+                />
+                <Icon onPress={() => setIsPasswordVisible(!isPasswordVisible)} name={isPasswordVisible ? 'eye-off-line' : 'eye-line'} size={27} color='#8395A7' />
+              </View>
               {
                 methods.formState.errors.password && (
-                  <Text className='text-red-500'>
+                  <Text className='text-[#EF476F]' >
                     {methods.formState.errors.password.message}
                   </Text>
                 )
               }
             </View>
-            <View className='gap-4 flex-row items-center border-[#D9E3E8] border rounded-lg px-4'>
-              <Controller
-                control={methods.control}
-                name='confirmPassword'
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput onChangeText={onChange} value={value} onBlur={onBlur} secureTextEntry={!isPasswordVisible} placeholder='Re-enter your password' returnKeyType='send' placeholderTextColor={'#8395A7'} style={{ fontFamily: 'Nunito_400Regular' }} className='flex-1 h-10 text-[#37474F] text-sm rounded-lg py-2.5' />
-                )}
-              />
-              <Icon onPress={() => setIsPasswordVisible(!isPasswordVisible)} name={isPasswordVisible ? 'eye-off-line' : 'eye-line'} size={27} color='#D9E3E8' />
+            <View className='gap-2'>
+              <Text style={{ fontFamily: 'Nunito_500Medium' }} className='text-lg text-[#1E1E1E]' >
+                Confirm Password
+              </Text>
+              <View className={`flex-row items-center ${methods.formState.errors.confirmPassword ? "border-[#EF476F]" : "border-[#D9E3E8]"} border rounded-lg pr-2`}>
+                <Controller
+                  control={methods.control}
+                  name='confirmPassword'
+                  render={({ field }) => (
+                    <TextInput
+                      {...field}
+                      onChangeText={field.onChange}
+                      secureTextEntry={!isPasswordVisible}
+                      placeholder='Re-enter your password'
+                      returnKeyType='send'
+                      placeholderTextColor={'#8395A7'}
+                      style={{ fontFamily: 'Nunito_400Regular' }}
+                      className='flex-1 h-13 text-[#37474F] text-lg rounded-lg pl-4 py-2.5'
+                    />
+                  )}
+                />
+                <Icon onPress={() => setIsPasswordVisible(!isPasswordVisible)} name={isPasswordVisible ? 'eye-off-line' : 'eye-line'} size={27} color='#8395A7' />
+              </View>
               {
-                methods.formState.errors.password && (
-                  <Text className='text-red-500'>
-                    {methods.formState.errors.password.message}
+                methods.formState.errors.confirmPassword && (
+                  <Text className='text-[#EF476F]'>
+                    {methods.formState.errors.confirmPassword.message}
                   </Text>
                 )
               }
             </View>
-            <Pressable disabled={!methods.formState.isValid} onPress={methods.handleSubmit(onSubmit)} className='bg-[#06D6A0] h-10 justify-center items-center rounded-xl'>
+            <Pressable disabled={!methods.formState.isValid} onPress={methods.handleSubmit(onSubmit)} className='bg-[#06D6A0] h-12 justify-center items-center rounded-xl'>
               <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-lg text-white' >
                 Sign Up
               </Text>
             </Pressable>
             <View className='flex flex-row gap-1 items-center justify-center' >
-              <Text style={{ fontFamily: 'Nunito_400Regular' }} className='text-[#8395A7] text-sm'>Already registered?</Text>
+              <Text style={{ fontFamily: 'Nunito_400Regular' }} className='text-[#8395A7] text-md'>Already registered?</Text>
               <Link href={'/login'}>
-                <Text className='text-[#06D6A0] text-sm'>
+                <Text className='text-[#06D6A0] text-md'>
                   Login
                 </Text>
               </Link>
