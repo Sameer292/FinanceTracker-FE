@@ -25,10 +25,6 @@ workflows:
       - name: Clean previous Android build
         script: |
           rm -rf android/app/build
-      - name: Prebuild Expo
-        script: |
-          npx expo prebuild --platform android --clean
-
       - name: Install dependencies
         script: |
           LOCK_HASH=$(sha256sum package-lock.json | cut -d' ' -f1)
@@ -36,9 +32,13 @@ workflows:
             echo "📦 Dependencies unchanged, using cache"
           else
             echo "📦 Installing dependencies..."
-            npm ci
+            npm install
             echo "$LOCK_HASH" > .lock.hash
           fi
+      - name: Prebuild Expo
+        script: |
+          npx expo prebuild --platform android --clean
+
       - name: Build Android release
         script: |
           cd android
