@@ -28,12 +28,13 @@ workflows:
           rm -rf android/app/build
       - name: Install dependencies
         script: |
-          if [ -d "node_modules" ] && cmp -s package.json .package-lock.hash; then
-            echo " package.json unchanged, using cached node_modules"
+          LOCK_HASH=$(sha256sum package-lock.json | cut -d' ' -f1)
+          if [ -d node_modules ] && [ "$LOCK_HASH" = "$(cat .lock.hash 2>/dev/null)" ]; then
+            echo "📦 Dependencies unchanged, using cache"
           else
-            echo " Installing dependencies..."
+            echo "📦 Installing dependencies..."
             npm ci
-            cp package.json .package-lock.hash
+            echo "$LOCK_HASH" > .lock.hash
           fi
       - name: Prebuild Expo
         script: |
