@@ -29,3 +29,8 @@ export const addCategory = async (data: createCategory) => {
     const res = await apiClient.post('/categories', data)
     return res.data
 }
+
+export const changePassword = async (data: changePassword) => {
+    const res = await apiClient.put<{message:string, accessToken:string}>('/change-password', data)
+    return res.data
+}

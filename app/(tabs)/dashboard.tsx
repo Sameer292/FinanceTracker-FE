@@ -44,7 +44,7 @@ export default function dashboard() {
         <View className='flex-row justify-between border-[0.5] items-center border-[#A9DFBF] bg-linear-to-r from-[#F5F7FA] to-[#F1F9F4] rounded-lg pl-4.5 pr-5'>
           <View className='py-4'>
             <Text className='text-[#8395A7] text-lg font-nunito-semibold'>Total Income</Text>
-            <Text className='text-[#37474F] text-xl font-nunito-bold'>$ {user?.current_balance ?? 0.00}</Text>
+            <Text className='text-[#37474F] text-xl font-nunito-bold'>$ {user?.total_income ?? 0.00}</Text>
           </View>
           <View>
             <TrendUp />
@@ -53,7 +53,7 @@ export default function dashboard() {
         <View className='flex-row justify-between items-center pr-5 border-[0.5] border-[#FADBD8] bg-linear-to-r from-[#F5F7FA] to-[#FEF5F5] rounded-lg pl-4.5'>
           <View className='py-4'>
             <Text className='text-[#8395A7] text-lg font-nunito-semibold'>Total Expense</Text>
-            <Text className='text-[#37474F] text-xl font-nunito-bold'>$ {user?.current_balance ?? 0.00}</Text>
+            <Text className='text-[#37474F] text-xl font-nunito-bold'>$ {user?.total_expenses ?? 0.00}</Text>
           </View>
           <View>
             <TrendDown />
@@ -76,7 +76,7 @@ export default function dashboard() {
         {isInitialLoading && (
           <View className="gap-2 w-full">
             {Array.from({ length: 5 }).map((_, i) => (
-              <ListSkeleton key={i} />
+              <ListSkeleton isLoading={isInitialLoading} key={i} />
             ))}
           </View>
         )}
@@ -116,11 +116,9 @@ export default function dashboard() {
             }
             ListFooterComponent={
               () => (latestTransactions && latestTransactions?.transactions.length > 0) && (
-                <TouchableOpacity className='border-[#D9E3E8] mt-5 border rounded-lg px-4 py-2.5 w-max' onPress={() => console.log('Bottom btn')}>
-                  <Text className='text-[#118AB2] text-sm font-nunito-medium'>
-                    See All
-                  </Text>
-                </TouchableOpacity>
+                <Text className='text-[#8395A7] text-sm font-nunito-medium'>
+                  That's it for your recent activity.
+                </Text>
               )
             }
           />

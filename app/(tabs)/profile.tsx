@@ -1,6 +1,7 @@
 import { Separator } from 'app/components/Separator'
 import { useAuth } from 'app/context/AuthContext'
 import { Href, Link } from 'expo-router'
+import { Divider } from 'heroui-native'
 import { Image, Pressable, Text, View } from 'react-native'
 import Icon, { IconName } from 'react-native-remix-icon'
 
@@ -33,10 +34,10 @@ export default function profile() {
         <View className='w-full gap-8'>
           <View className='w-full gap-4'>
             <ProfileOptionCard linkRef={'/editProfile'} text='Edit Profile' icon='user-fill' />
-            <ProfileOptionCard linkRef={'/addCategories'} text='Change Password' icon='lock-password-fill' />
+            <ProfileOptionCard linkRef={'/change-password'} text='Change Password' icon='lock-password-fill' />
             <ProfileOptionCard linkRef={'/addCategories'} text='Currency' icon='currency-fill' />
           </View>
-          <Separator />
+          <Divider orientation='horizontal' variant='thin' className='border-[#D9E3E8] border-t'/>
           <Pressable onPress={logout} className='h-14 w-full rounded-xl bg-[#FDEEEE] justify-center items-center'>
             <Text className='text-xl font-semibold text-[#D9534F]'>
               Logout

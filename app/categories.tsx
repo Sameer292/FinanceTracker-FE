@@ -23,13 +23,12 @@ export default function Categories() {
             c.name.toLowerCase().includes(searchText.toLowerCase())
         )
     }, [Categories, searchText])
-console.log({error})
     const isInitialLoading = isLoading && !Categories
 
     return (
-        <View className='flex-1 px-4 gap-4 pt-5 bg-white '>
+        <View className='flex-1 gap-4 pt-5 bg-white '>
             {/* Header */}
-            <View className='pb-4 gap-4 justify-center items-center flex'>
+            <View className='pb-4 px-4 gap-4 justify-center items-center flex'>
                 <View className='w-full gap-2 flex-row items-center'>
                     <Pressable onPress={() => router.back()}>
                         <Text className='font-semibold text-xl text-[#13EC5B]'>
@@ -52,15 +51,15 @@ console.log({error})
             {/* Body */}
             <View className='gap-4 flex-1'>
                 {isInitialLoading && (
-                    <View className="gap-4 mt-4">
+                    <View className="gap-4 px-4 mt-4">
                         {Array.from({ length: 7 }).map((_, i) => (
-                            <ListSkeleton key={i} />
+                            <ListSkeleton isLoading={isInitialLoading} key={i} />
                         ))}
                     </View>
                 )}
 
                 {error && (
-                    <View className="items-center gap-2 mt-10">
+                    <View className="items-center gap-2 px-4 mt-10">
                         <Text>Failed to load categories</Text>
                         <Pressable onPress={() => refetch()}>
                             <Text className="text-[#06D6A0]">Tap to retry</Text>
