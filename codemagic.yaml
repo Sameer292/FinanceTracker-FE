@@ -11,6 +11,8 @@ workflows:
         source: true
       cancel_previous_builds: true
     environment:
+      groups:
+        - development
       vars:
         NODE_VERSION: 18
         JAVA_VERSION: 17
