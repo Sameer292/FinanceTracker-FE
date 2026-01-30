@@ -22,13 +22,12 @@ export const TransactionCard = ({ note, amount, currency, transaction_date, cate
             />
           </View>
           <View style={{ gap: 4 }}>
-            <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-xl text-[#37474F]'>{note}</Text>
+            <Text className='font-nunito-bold text-xl text-[#37474F]'>{note}</Text>
 
             <View className="flex-row gap-3 items-center">
               {transaction_date && (
                 <Text
-                  style={{ fontSize: 12, fontFamily: 'Nunito_600SemiBold' }}
-                  className="text-gray-500"
+                  className="text-gray-500 font-nunito-semibold text-sm"
                 >
                   {
                     new Date(transaction_date).toLocaleDateString("en-GB", {
@@ -44,8 +43,7 @@ export const TransactionCard = ({ note, amount, currency, transaction_date, cate
         </View>
         <View  >
           <Text
-            style={{ fontFamily: 'Nunito_500Medium' }}
-            className={` ${transaction_type === 'income' ? 'text-[#27AE60]' : 'text-[#EB5757]'} text-lg text-right`}>
+            className={`font-nunito-medium ${transaction_type === 'income' ? 'text-[#27AE60]' : 'text-[#EB5757]'} text-lg text-right`}>
             {transaction_type === 'income' ? '+' : '-'}{currency}{amount.toFixed(2)}
           </Text>
         </View>

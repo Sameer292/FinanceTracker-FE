@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "FinanceTracker",
-    "slug": "FinanceTracker",
+    "slug": "financetracker",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -12,6 +12,7 @@
       "supportsTablet": true
     },
     "android": {
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -20,7 +21,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "usesCleartextTraffic": true
+      "usesCleartextTraffic": true,
+      "package": "com.iamsam3.financetracker"
     },
     "web": {
       "output": "static",
@@ -46,6 +48,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ff87102e-8bfd-4297-b651-b378a2379e43"
+      }
+    },
+    "owner": "iamsam3"
   }
 }

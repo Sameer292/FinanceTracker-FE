@@ -11,6 +11,8 @@ workflows:
         source: true
       cancel_previous_builds: true
     environment:
+      groups:
+        - development
       vars:
         NODE_VERSION: 18
         JAVA_VERSION: 17
@@ -19,27 +21,26 @@ workflows:
         - iamsameer
     cache:
         cache_paths:
+          - ~/.npm
           - ~/.gradle
-          - node_modules
     scripts:
-      - name: Install Bun
-        script: |
-          curl -L https://bun.sh/install | bash
       - name: Clean previous Android build
         script: |
           rm -rf android/app/build
       - name: Install dependencies
         script: |
-          if [ -d "node_modules" ] && cmp -s package.json .package-lock.hash; then
-            echo " package.json unchanged, using cached node_modules"
+          LOCK_HASH=$(sha256sum package-lock.json | cut -d' ' -f1)
+          if [ -d node_modules ] && [ "$LOCK_HASH" = "$(cat .lock.hash 2>/dev/null)" ]; then
+            echo "📦 Dependencies unchanged, using cache"
           else
-            echo " Installing dependencies..."
-            bun ci
-            cp package.json .package-lock.hash
+            echo "📦 Installing dependencies..."
+            npm install
+            echo "$LOCK_HASH" > .lock.hash
           fi
       - name: Prebuild Expo
         script: |
-          bunx expo prebuild --platform android --clean
+          npx expo prebuild --platform android --clean
+
       - name: Build Android release
         script: |
           cd android

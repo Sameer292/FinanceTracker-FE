@@ -32,8 +32,8 @@ const AllTabs = () => {
       safeAreaInsets={{ bottom: 30 }}
       screenOptions={{
         tabBarStyle: {
-          paddingTop: 12,
-          backgroundColor: '#F6F8F6',
+          paddingTop: 10,
+          backgroundColor: 'white',
         },
         headerShown: false
       }}
@@ -100,7 +100,7 @@ const CustomIconTabs = ({
     <Animated.View
       style={animatedStyle}
       className={`w-17 h-10 ${
-        focused ? 'bg-[#CAF0F8]' : 'bg-[#F6F8F6]'
+        focused ? 'bg-[#CAF0F8]' : 'bg-white'
       } items-center rounded-4xl justify-center mb-4`}
     >
       <Icon

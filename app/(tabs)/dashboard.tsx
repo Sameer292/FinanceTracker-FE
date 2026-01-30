@@ -23,7 +23,7 @@ export default function dashboard() {
       {/* Header */}
       <View className='w-full flex py-2 '>
         <View className='flex justify-between flex-row'>
-          <Text style={{ fontFamily: 'Nunito_700Bold' }} className='text-2xl'>Good evening, {user?.name.split(' ')[0]}</Text>
+          <Text className='font-nunito-bold text-2xl'>Good evening, {user?.name.split(' ')[0]}</Text>
           <View className='gap-4 flex-row'>
             <Pressable onPress={() => console.log("Search")}>
               <Icon name='search-line' color='#8395A7' size={25} />
@@ -33,7 +33,7 @@ export default function dashboard() {
             </Link>
           </View>
         </View>
-        <Text style={{ fontFamily: 'Nunito_500Medium' }} className='text-lg'>
+        <Text className='font-nunito-medium text-lg'>
           {
             formatDate(new Date())
           }
@@ -43,8 +43,8 @@ export default function dashboard() {
       <View className='w-full gap-3'>
         <View className='flex-row justify-between border-[0.5] items-center border-[#A9DFBF] bg-linear-to-r from-[#F5F7FA] to-[#F1F9F4] rounded-lg pl-4.5 pr-5'>
           <View className='py-4'>
-            <Text className='text-[#8395A7] text-lg' style={{ fontFamily: 'Nunito_600SemiBold' }} >Total Income</Text>
-            <Text className='text-[#37474F] text-xl' style={{ fontFamily: 'Nunito_700Bold' }} >$ {user?.current_balance ?? 0.00}</Text>
+            <Text className='text-[#8395A7] text-lg font-nunito-semibold'>Total Income</Text>
+            <Text className='text-[#37474F] text-xl font-nunito-bold'>$ {user?.total_income ?? 0.00}</Text>
           </View>
           <View>
             <TrendUp />
@@ -52,8 +52,8 @@ export default function dashboard() {
         </View>
         <View className='flex-row justify-between items-center pr-5 border-[0.5] border-[#FADBD8] bg-linear-to-r from-[#F5F7FA] to-[#FEF5F5] rounded-lg pl-4.5'>
           <View className='py-4'>
-            <Text className='text-[#8395A7] text-lg' style={{ fontFamily: 'Nunito_600SemiBold' }} >Total Expense</Text>
-            <Text className='text-[#37474F] text-xl' style={{ fontFamily: 'Nunito_700Bold' }} >$ {user?.current_balance ?? 0.00}</Text>
+            <Text className='text-[#8395A7] text-lg font-nunito-semibold'>Total Expense</Text>
+            <Text className='text-[#37474F] text-xl font-nunito-bold'>$ {user?.total_expenses ?? 0.00}</Text>
           </View>
           <View>
             <TrendDown />
@@ -62,13 +62,13 @@ export default function dashboard() {
       </View>
       <View className='flex-1 gap-4 mt-4 w-full'>
         <View className='w-full justify-between flex-row items-center'>
-          <Text className='text-lg' style={{ fontFamily: 'Nunito_600SemiBold' }}>
+          <Text className='text-lg font-nunito-semibold'>
             Recent Transactions
           </Text>
           {
             latestTransactions && latestTransactions?.transactions.length > 0 && (
               <TouchableOpacity className='p-4' onPress={() => console.log("See all")}>
-                <Text className='text-[#8395A7]' style={{ fontFamily: 'Nunito_600SemiBold', fontSize: 14 }}>See All</Text>
+                <Text className='text-[#8395A7] font-nunito-semibold text-sm'>See All</Text>
               </TouchableOpacity>
             )
           }
@@ -76,7 +76,7 @@ export default function dashboard() {
         {isInitialLoading && (
           <View className="gap-2 w-full">
             {Array.from({ length: 5 }).map((_, i) => (
-              <ListSkeleton key={i} />
+              <ListSkeleton isLoading={isInitialLoading} key={i} />
             ))}
           </View>
         )}
@@ -107,8 +107,8 @@ export default function dashboard() {
               () => (
                 <View className='items-center gap-2 justify-center flex-1'>
                   <Icon name='receipt-fill' color='#06D6A0' size={24} />
-                  <Text className='text-center text-xl' style={{ fontFamily: 'Nunito_600SemiBold' }}>No transactions yet.</Text>
-                  <Text className='text-[#8395A7] text-lg text-center' style={{ fontFamily: 'Nunito_400Regular' }}>
+                  <Text className='text-center text-x font-nunito-semibold'>No transactions yet.</Text>
+                  <Text className='text-[#8395A7] text-lg text-center font-nunito-regular'>
                     Start tracking your spending by adding your first expense or income.
                   </Text>
                 </View>
@@ -116,11 +116,9 @@ export default function dashboard() {
             }
             ListFooterComponent={
               () => (latestTransactions && latestTransactions?.transactions.length > 0) && (
-                <TouchableOpacity className='border-[#D9E3E8] mt-5 border rounded-lg px-4 py-2.5 w-max' onPress={() => console.log('Bottom btn')}>
-                  <Text className='text-[#118AB2] text-sm' style={{ fontFamily: 'Nunito_500Medium' }}>
-                    See All
-                  </Text>
-                </TouchableOpacity>
+                <Text className='text-[#8395A7] text-sm font-nunito-medium'>
+                  That's it for your recent activity.
+                </Text>
               )
             }
           />

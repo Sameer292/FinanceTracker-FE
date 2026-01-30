@@ -52,8 +52,8 @@ const Stacks = () => {
     <SafeAreaView style={{ flex: 1 }} edges={['top']}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Protected guard={authStatus==='unauthenticated'} >
-          <Stack.Screen name='login' options={{ animation: 'slide_from_right' }} />
-          <Stack.Screen name='signup' options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name='(auth)/login' options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name='(auth)/signup' options={{ animation: 'slide_from_right' }} />
         </Stack.Protected>
         <Stack.Protected guard={authStatus==='authenticated'}>
           <Stack.Screen name='(tabs)' options={{ animation: 'slide_from_right' }} />
@@ -61,6 +61,8 @@ const Stacks = () => {
           <Stack.Screen name='byCategories/[id]' options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name='addTransactions' options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name='addCategories' options={{ animation: 'ios_from_right' }} />
+          <Stack.Screen name='editProfile' options={{animation:'ios_from_right'}} />
+          <Stack.Screen name='(auth)/change-password' options={{animation:'fade'}} />
         </Stack.Protected>
       </Stack>
     </SafeAreaView>

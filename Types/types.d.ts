@@ -57,6 +57,9 @@ type User = {
   name: string,
   email: string,
   current_balance: number
+  total_transactions: number
+  total_expenses: number
+  total_income: number
 }
 
 type LoginInput = {
@@ -68,4 +71,9 @@ type RegisterInput = {
   name: string,
   email: string,
   password: string
+}
+
+type changePassword = {
+  current_password: string,
+  new_password: string
 }
