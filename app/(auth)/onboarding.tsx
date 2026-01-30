@@ -14,7 +14,7 @@ export default function OnboardingScreen() {
     <View
       className={'bg-linear-to-b flex-1 from-[#FFF] to-[#06D6A0]'}
     >
-      <BottomSheet isOpen isDefaultOpen>
+      <BottomSheet isOpen={true} isDefaultOpen={true}>
         <BottomSheet.Portal>
           <BottomSheet.Content
             snapPoints={['45%']}

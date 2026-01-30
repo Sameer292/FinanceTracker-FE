@@ -2,11 +2,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useAuth } from "app/context/AuthContext"
 import { router } from "expo-router"
 import { Controller, useForm } from "react-hook-form"
-import { View, Text, Pressable, Image, TextInput } from "react-native"
+import { View, Text, Pressable, Image, TextInput, TouchableHighlight } from "react-native"
 import Icon from "react-native-remix-icon"
 import z from "zod"
-import { BottomSheet, Button } from 'heroui-native'
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet"
+import { BottomSheet } from 'heroui-native'
+import { launchImageLibraryAsync, requestMediaLibraryPermissionsAsync } from 'expo-image-picker'
+import { toast } from "sonner-native"
+import { useState } from "react"
 export default function EditProfile() {
   const { user } = useAuth()
   const editProfileSchema = z.object({
@@ -104,12 +106,29 @@ export default function EditProfile() {
   )
 }
 const BottomSheetEditProfile = () => {
+  const [pickedImage, setPickedImage] = useState<string | null>(null)
+  const handleImagePicker = async () => {
+    console.log("PICK")
+    const permissionResult = await requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      toast.error('Permission required');
+      return;
+    }
+    let result = await launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.canceled) {
+      setPickedImage(result.assets[0].uri)
+    }
+  }
   return (
     <BottomSheet>
-      <BottomSheet.Trigger>
-        <View className="p-2 rounded-full">
+      <BottomSheet.Trigger asChild>
+        <Pressable onPress={() => setPickedImage(null)} className="p-2 rounded-full">
           <Icon name="edit-line" size={15} color="#06D6A0" />
-        </View>
+        </Pressable>
       </BottomSheet.Trigger>
       <BottomSheet.Portal>
         <BottomSheet.Overlay className="bg-[#0000004D]" />
@@ -126,27 +145,37 @@ const BottomSheetEditProfile = () => {
 
             {/* Image in the middle */}
             <View className="items-center justify-center">
-              <View className="border-2 border-[#D9E3E8] items-center justify-center size-49 rounded-full">
-                <Image
-                  source={require('app/assets/IMG_2110.jpg')}
-                  className="rounded-full size-48"
-                />
+              <View className="border-2 border-[#D9E3E8] items-center justify-center size-56 rounded-full">
+                {
+                  !pickedImage ? (
+                    <Image
+                      source={require('app/assets/IMG_2110.jpg')}
+                      className="rounded-full size-55"
+                    />
+
+                  ) : (
+                    <Image
+                      source={{ uri: pickedImage }}
+                      className="rounded-full size-55"
+                    />
+                  )
+                }
               </View>
             </View>
 
             {/* Buttons at the bottom */}
             <View className="gap-3 ">
-              <Pressable className="bg-[#07D19D] py-4 rounded-xl items-center">
+              <TouchableHighlight onPress={handleImagePicker} underlayColor={'#04bf8f'} className="bg-[#07D19D] py-4 rounded-xl items-center">
                 <Text className="text-lg text-white font-nunito-bold">
                   Choose from Gallery
                 </Text>
-              </Pressable>
+              </TouchableHighlight>
               <BottomSheet.Close asChild>
-                <Pressable className="border border-[#118AB2] py-4 rounded-xl items-center">
+                <TouchableHighlight underlayColor={'#e6e3e6'} className="border border-[#118AB2] py-4 rounded-xl items-center">
                   <Text className="text-[#118AB2] text-lg font-nunito-semibold">
                     Cancel
                   </Text>
-                </Pressable>
+                </TouchableHighlight>
               </BottomSheet.Close>
             </View>
           </View>
