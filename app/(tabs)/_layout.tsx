@@ -10,17 +10,17 @@ import Animated, {
 import { useEffect } from 'react';
 
 export default function TabLayout() {
-  const { authStatus } = useAuth()
-  if (authStatus === "loading") {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" />
-      </View>
-    )
-  }
-  if (authStatus === "unauthenticated") {
-    return <Redirect href="/login" />
-  }
+  // const { authStatus } = useAuth()
+  // if (authStatus === "loading") {
+  //   return (
+  //     <View className="flex-1 justify-center items-center">
+  //       <ActivityIndicator size="large" />
+  //     </View>
+  //   )
+  // }
+  // if (authStatus === "unauthenticated") {
+  //   return <Redirect href="/login" />
+  // }
   return (
     <AllTabs />
   );
@@ -99,9 +99,8 @@ const CustomIconTabs = ({
   return (
     <Animated.View
       style={animatedStyle}
-      className={`w-17 h-10 ${
-        focused ? 'bg-[#CAF0F8]' : 'bg-white'
-      } items-center rounded-4xl justify-center mb-4`}
+      className={`w-17 h-10 ${focused ? 'bg-[#CAF0F8]' : 'bg-white'
+        } items-center rounded-4xl justify-center mb-4`}
     >
       <Icon
         name={focused ? focusedIcon : outOfFocusIcon}

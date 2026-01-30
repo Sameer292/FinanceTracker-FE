@@ -55,7 +55,7 @@ const Stacks = () => {
     <SafeAreaView style={{ flex: 1 }} edges={['top']}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Protected guard={authStatus === 'unauthenticated'} >
-          <Stack.Screen name="(auth)/onboarding" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="(auth)/onboarding" options={{ animation: 'fade' }} />
           <Stack.Screen name='(auth)/login' options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name='(auth)/signup' options={{ animation: 'slide_from_right' }} />
         </Stack.Protected>
