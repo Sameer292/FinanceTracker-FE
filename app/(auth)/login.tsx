@@ -19,7 +19,7 @@ export default function login() {
     resolver: zodResolver(loginSchema)
   })
   const onSubmit = async (loginData: loginSchemaType) => {
-    await login(loginData)
+    login(loginData)
   }
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding' className='bg-white'>
@@ -56,7 +56,7 @@ export default function login() {
                     autoCapitalize='none'
                     onChangeText={field.onChange}
                     placeholderTextColor={'#8395A7'}
-                    className={`h-13 font-nunito-regular border ${isLoginError ?  "border-[#EF476F]" : "border-[#D9E3E8]"}  text-[#37474F] text-lg rounded-lg px-4 py-2.5`}
+                    className={`h-13 font-nunito-regular border ${isLoginError ? "border-[#EF476F]" : "border-[#D9E3E8]"}  text-[#37474F] text-lg rounded-lg px-4 py-2.5`}
                   />
                 )}
               />
@@ -81,8 +81,8 @@ export default function login() {
                       {...field}
                       error={isLoginError}
                       onChangeText={field.onChange}
-                      placeholder='Password' 
-                      returnKeyType='send' 
+                      placeholder='Password'
+                      returnKeyType='send'
                     />
                   )}
                 />
