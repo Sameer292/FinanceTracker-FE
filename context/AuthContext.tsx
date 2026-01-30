@@ -36,6 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginInput) => {
+      console.log({ data })
       const res = await apiClient.post("/login", data)
       return res.data
     },
@@ -44,9 +45,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       queryClient.invalidateQueries({ queryKey: ["me"] })
     },
     onError: (err) => {
+      console.log({ err }, isAxiosError(err))
       toast.error("Failed logging in", {
         description: isAxiosError(err)
-          ? err.response?.data.detail
+          ? err.response?.data.detail || err.message
           : "Something went wrong",
         richColors: true,
       })
@@ -96,7 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           : "unauthenticated"
     })
   }, [isLoading, user])
- 
+
   return (
     <AuthContext.Provider
       value={{

@@ -15,7 +15,7 @@ export default function Index() {
   }
 
   if (authStatus === "unauthenticated") {
-    return <Redirect href="/login" />
+    return <Redirect href="/onboarding" />
   }
 
   return <Redirect href="/(tabs)/dashboard" />;
