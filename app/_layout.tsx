@@ -65,7 +65,7 @@ const Stacks = () => {
           <Stack.Screen name='byCategories/[id]' options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name='addTransactions' options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name='addCategories' options={{ animation: 'ios_from_right' }} />
-          <Stack.Screen name='editProfile' options={{ animation: 'ios_from_right' }} />
+          <Stack.Screen name='editProfile' options={{ animation: 'fade' }} />
           <Stack.Screen name='(auth)/change-password' options={{ animation: 'fade' }} />
         </Stack.Protected>
       </Stack>
