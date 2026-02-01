@@ -1,6 +1,6 @@
 import { BottomSheet } from "heroui-native";
 import { launchImageLibraryAsync, requestMediaLibraryPermissionsAsync  } from "expo-image-picker";
-import { Pressable, View, TouchableHighlight, Image, Text } from "react-native";
+import { Pressable, View, TouchableHighlight, Image, Text, Keyboard } from "react-native";
 import { toast } from "sonner-native";
 import { useState } from "react";
 import Icon from "react-native-remix-icon";
@@ -27,7 +27,10 @@ export const BottomSheetEditProfile = () => {
 		<BottomSheet>
 			<BottomSheet.Trigger asChild>
 				<Pressable
-					onPress={() => setPickedImage(null)}
+					onPress={() => {
+						Keyboard.isVisible() && Keyboard.dismiss();
+						setPickedImage(null)
+					}}
 					className="p-2 rounded-full"
 				>
 					<Icon name="edit-line" size={15} color="#06D6A0" />

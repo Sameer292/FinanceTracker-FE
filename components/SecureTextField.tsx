@@ -27,7 +27,7 @@ export const SecureTextField = React.forwardRef<
 			/>
 			<Icon
 				onPress={() => setVisible((v) => !v)}
-				name={visible ? "eye-off-line" : "eye-line"}
+				name={visible ? "eye-line" : "eye-off-line"}
 				size={27}
 				color="#8395A7"
 			/>
