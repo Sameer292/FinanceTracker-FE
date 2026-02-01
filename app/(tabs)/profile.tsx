@@ -41,7 +41,7 @@ export default function profile() {
 							icon="lock-password-fill"
 						/>
 						<ProfileOptionCard
-							linkRef={"/addCategories"}
+							linkRef={"/currency"}
 							text="Currency"
 							icon="currency-fill"
 						/>
