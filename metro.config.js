@@ -1,11 +1,11 @@
-const { getDefaultConfig } = require('expo/metro-config');
-const { withUniwindConfig } = require('uniwind/metro'); 
+const { getDefaultConfig } = require("expo/metro-config");
+const { withUniwindConfig } = require("uniwind/metro");
 
 const config = getDefaultConfig(__dirname);
-module.exports = withUniwindConfig(config, {  
-  cssEntryFile: './app/globals.css',
-  dtsFile: './app/uniwind-types.d.ts',
-  polyfills: { 
-    rem: 14,
-  },
+module.exports = withUniwindConfig(config, {
+	cssEntryFile: "./app/globals.css",
+	dtsFile: "./app/uniwind-types.d.ts",
+	polyfills: {
+		rem: 14,
+	},
 });
