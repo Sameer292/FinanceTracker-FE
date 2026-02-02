@@ -1,15 +1,21 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { SecureTextField } from "app/components/SecureTextField";
 import { changePassword } from "app/lib/ApiCalls";
 import { isAxiosError } from "axios";
 import { router } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import {
+	ActivityIndicator,
+	Pressable,
+	Text,
+	TouchableHighlight,
+	View,
+} from "react-native";
 import Icon from "react-native-remix-icon";
 import { toast } from "sonner-native";
 import { object, string, type infer as Zinfer } from "zod";
+import { PasswordInput } from "app/components/PasswordInput";
 
 const ChangePassword = () => {
 	const client = useQueryClient();
@@ -90,80 +96,65 @@ const ChangePassword = () => {
 							<Controller
 								control={methods.control}
 								name="current_Password"
-								render={({ field: { onChange, onBlur, value } }) => (
+								render={({ field: { onChange, value } }) => (
 									<View className="justify-center gap-2">
 										<Text className="text-lg text-[#1E1E1E] font-nunito-medium">
 											Current Password
 										</Text>
-										<SecureTextField
-											error={!!methods.formState.errors.current_Password}
-											value={value}
-											onBlur={onBlur}
-											placeholder="Enter your current password"
+										<PasswordInput
+											error={methods.formState.errors.current_Password?.message}
 											onChangeText={onChange}
+											value={value}
+											placeholder="Enter your current password"
 										/>
 									</View>
 								)}
 							/>
-							{methods.formState.errors.current_Password && (
-								<Text className="text-[#EF476F]">
-									{methods.formState.errors.current_Password.message}
-								</Text>
-							)}
 						</View>
 						<View className="w-full gap-2">
 							<Controller
 								control={methods.control}
 								name="new_Password"
-								render={({ field: { onChange, onBlur, value } }) => (
+								render={({ field: { onChange, value } }) => (
 									<View className="justify-center gap-2">
 										<Text className="text-lg text-[#1E1E1E] font-nunito-medium">
 											New password
 										</Text>
-										<SecureTextField
-											error={!!methods.formState.errors.new_Password}
+										<PasswordInput
+											error={methods.formState.errors.new_Password?.message}
+											onChangeText={onChange}
 											value={value}
 											placeholder="Enter your new password"
-											onBlur={onBlur}
-											onChangeText={onChange}
 										/>
 									</View>
 								)}
 							/>
-							{methods.formState.errors.new_Password && (
-								<Text className="text-[#EF476F]">
-									{methods.formState.errors.new_Password.message}
-								</Text>
-							)}
 						</View>
 						<View className="w-full gap-2">
 							<Controller
 								control={methods.control}
 								name="confirm_new_Password"
-								render={({ field: { onChange, onBlur, value } }) => (
+								render={({ field: { onChange, value } }) => (
 									<View className="justify-center gap-2">
 										<Text className="text-lg text-[#1E1E1E] font-nunito-medium">
 											Confirm New password
 										</Text>
-										<SecureTextField
-											error={!!methods.formState.errors.confirm_new_Password}
-											value={value}
-											placeholder="Re-enter your new password"
-											onBlur={onBlur}
+										<PasswordInput
+											error={
+												methods.formState.errors.confirm_new_Password?.message
+											}
 											onChangeText={onChange}
+											value={value}
+											placeholder="Reenter your new password"
 										/>
 									</View>
 								)}
 							/>
-							{methods.formState.errors.confirm_new_Password && (
-								<Text className="text-[#EF476F]">
-									{methods.formState.errors.confirm_new_Password.message}
-								</Text>
-							)}
 						</View>
 					</View>
 					<View className="gap-3 ">
-						<Pressable
+						<TouchableHighlight
+							underlayColor={"#04bf8f"}
 							disabled={changePasswordMutation.isPending}
 							className="bg-[#07D19D] py-4 rounded-xl items-center"
 							onPress={methods.handleSubmit(onSubmit)}
@@ -175,15 +166,16 @@ const ChangePassword = () => {
 									Save Changes
 								</Text>
 							)}
-						</Pressable>
-						<Pressable
+						</TouchableHighlight>
+						<TouchableHighlight
+							underlayColor={"#e6e3e6"}
 							onPress={() => router.back()}
 							className="border border-[#118AB2] py-4 rounded-xl items-center"
 						>
 							<Text className="text-[#118AB2] text-lg font-nunito-semibold">
 								Cancel
 							</Text>
-						</Pressable>
+						</TouchableHighlight>
 					</View>
 				</View>
 			</View>

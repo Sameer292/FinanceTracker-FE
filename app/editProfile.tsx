@@ -7,7 +7,6 @@ import {
 	Text,
 	Pressable,
 	Image,
-	TextInput,
 	TouchableHighlight,
 	TouchableWithoutFeedback,
 	ActivityIndicator,
@@ -64,10 +63,9 @@ export default function EditProfile() {
 			);
 			return res.data;
 		},
-		onSuccess(data, variables, onMutateResult, context) {
-			console.log({ data, variables, onMutateResult, context });
+		onSuccess(data) {
 			queryClient.invalidateQueries({ queryKey: ["me"] });
-			toast.success("Profile updated successfully", {
+			toast.success(data.message || "Profile updated successfully", {
 				richColors: true,
 			});
 		},
@@ -76,6 +74,12 @@ export default function EditProfile() {
 				toast.error(error.response?.data.detail || "Failed updating profile", {
 					richColors: true,
 				});
+				if (error.response?.data.detail.includes("email")) {
+					methods.setError("email", {
+						type: "manual",
+						message: error.response?.data.detail,
+					});
+				}
 				return;
 			}
 			toast.error("Failed updating profile", {
@@ -83,8 +87,6 @@ export default function EditProfile() {
 			});
 		},
 	});
-	console.log(errors);
-	console.log(methods.watch());
 
 	return (
 		<TouchableWithoutFeedback
@@ -101,10 +103,11 @@ export default function EditProfile() {
 				<View className="flex-1 items-center gap-8">
 					<View
 						style={{ borderRadius: "100%" }}
-						className="relative rounded-full border-2 border-[#D9E3E8] items-center justify-center size-32"
+						className="relative rounded-full items-center justify-center size-32"
 					>
 						<Image
 							source={require("app/assets/IMG_2110.jpg")}
+							style={{borderColor:'#D9E3E8'}}
 							className="rounded-full size-31 border-2 border-[#D9E3E8]"
 						/>
 						<View className="absolute -bottom-3 bg-white rounded-full border-[#D9E3E8] border">
@@ -118,9 +121,6 @@ export default function EditProfile() {
 								name="name"
 								render={({ field }) => (
 									<View className="justify-center gap-2">
-										{/* <Text className="text-lg text-[#1E1E1E] font-nunito-medium">
-											Name
-										</Text> */}
 										<TextField isRequired isInvalid={!!errors.name}>
 											<TextField.Label className="text-lg text-[#1E1E1E] font-nunito-medium">
 												Name
@@ -129,10 +129,10 @@ export default function EditProfile() {
 												{...field}
 												onChangeText={field.onChange}
 												className={clsx(
-													"text-lg font-nunito-regular px-4 rounded-xl text-[#37474F] border border-[#D4DEE3]",
+													"text-lg font-nunito-regular px-4 rounded-xl text-[#37474F] focus:border-2",
 													errors.name
 														? "border-2 border-red-500"
-														: "border-2 border-green-300",
+														: "border border-[D4DEE3]",
 												)}
 												placeholder="Enter your name"
 											/>
@@ -150,19 +150,27 @@ export default function EditProfile() {
 								name="email"
 								render={({ field }) => (
 									<View className="justify-center gap-2">
-										<Text className="text-lg text-[#1E1E1E] font-nunito-medium">
-											Email
-										</Text>
-										<TextInput
-											{...field}
-											onChangeText={field.onChange}
-											className="text-lg font-nunito-regular focus:border-2 focus:border-[#83ecd2] px-4 border border-[#D4DEE3] text-[#37474F] rounded-xl"
-										/>
-										{errors.email && (
-											<Text className="text-red-500 text-sm">
-												{errors.email.message}
-											</Text>
-										)}
+										<TextField isRequired isInvalid={!!errors.email}>
+											<TextField.Label className="text-lg text-[#1E1E1E] font-nunito-medium">
+												Email
+											</TextField.Label>
+											<TextField.Input
+												{...field}
+												onChangeText={field.onChange}
+												className={clsx(
+													"text-lg font-nunito-regular px-4 rounded-xl text-[#37474F] focus:border-2",
+													errors.email
+														? "border-2 border-red-500"
+														: "border border-[D4DEE3]",
+												)}
+												placeholder="Enter your email"
+											/>
+											<TextField.ErrorMessage>
+												<Text className="text-red-500">
+													{errors?.email?.message}
+												</Text>
+											</TextField.ErrorMessage>
+										</TextField>
 									</View>
 								)}
 							/>

@@ -6,47 +6,106 @@ import { Controller, useForm } from "react-hook-form";
 import {
 	ActivityIndicator,
 	KeyboardAvoidingView,
-	Pressable,
 	ScrollView,
 	Text,
-	TextInput,
+	TouchableHighlight,
+	Keyboard,
+	Platform,
 	View,
 } from "react-native";
 import {
 	loginSchema,
 	type loginSchemaType,
 } from "app/lib/schemas/validationSchemas";
-import { SecureTextField } from "app/components/SecureTextField";
+import { TextField } from "heroui-native";
+import { useState, useEffect } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import Animated, {
+	interpolate,
+	useSharedValue,
+	useAnimatedStyle,
+	withTiming,
+	interpolateColor,
+} from "react-native-reanimated";
+import { PasswordInput } from "app/components/PasswordInput";
 
 export default function login() {
-	const { login, isLoading, isLoginError } = useAuth();
+	const { login, isLoading } = useAuth();
 
-	const methods = useForm<loginSchemaType>({
+	const {
+		formState: { errors, isValid },
+		...methods
+	} = useForm<loginSchemaType>({
 		defaultValues: {
 			email: "iamsameer@gmail.com",
 			password: "iamsameer",
 		},
-		mode: "onSubmit",
+		mode: "onChange",
 		resolver: zodResolver(loginSchema),
 	});
+
 	const onSubmit = async (loginData: loginSchemaType) => {
+		Keyboard.dismiss();
 		login(loginData);
 	};
+
+	const [isFocused, setIsFocused] = useState(false);
+	const borderColorAnim = useSharedValue(0);
+	const borderWidthAnim = useSharedValue(1);
+
+	const handleFocus = () => {
+		setIsFocused(true);
+		borderColorAnim.value = withTiming(errors.email ? 2 : 1, { duration: 200 });
+		borderWidthAnim.value = withTiming(2, { duration: 200 });
+	};
+
+	const handleBlur = () => {
+		setIsFocused(false);
+		borderColorAnim.value = withTiming(errors.email ? 2 : 0, { duration: 200 });
+		borderWidthAnim.value = withTiming(1, { duration: 200 });
+	};
+
+	useEffect(() => {
+		if (errors.email) {
+			borderColorAnim.value = 2;
+		} else if (isFocused) {
+			borderColorAnim.value = 1;
+			borderWidthAnim.value = 2;
+		} else {
+			borderColorAnim.value = 0;
+			borderWidthAnim.value = 1;
+		}
+	}, [errors.email, isFocused, borderColorAnim, borderWidthAnim]);
+
+	const animatedStyle = useAnimatedStyle(() => {
+		const borderColor = interpolateColor(
+			borderColorAnim.value,
+			[0, 1, 2],
+			["#D4DEE3", "#09e6ae", "#EF4444"],
+		);
+
+		const borderWidth = interpolate(borderWidthAnim.value, [1, 2], [1, 2]);
+
+		return {
+			borderColor,
+			borderWidth,
+		};
+	});
+
 	return (
 		<KeyboardAvoidingView
 			style={{ flex: 1 }}
-			behavior="padding"
-			className="bg-white"
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
 		>
 			<ScrollView
 				style={{ flex: 1 }}
-				keyboardDismissMode="interactive"
-				keyboardShouldPersistTaps="handled"
-				contentContainerStyle={{ flex: 1, justifyContent: "center" }}
+				keyboardDismissMode="on-drag"
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
 			>
 				<View className="gap-12 px-4 -mt-20 h-max w-full justify-center items-center">
 					{/* Header */}
-					<View className=" gap-7 justify-center items-center">
+					<View className="gap-7 justify-center items-center">
 						<View className="rounded-full size-20 items-center justify-center">
 							<HomeIcon />
 						</View>
@@ -61,68 +120,82 @@ export default function login() {
 					</View>
 					<View className="w-full gap-5">
 						<View className="gap-2">
-							<Text className="font-nunito-medium text-lg text-[#1E1E1E]">
-								Email
-							</Text>
 							<Controller
 								control={methods.control}
 								name="email"
 								render={({ field }) => (
-									<TextInput
-										{...field}
-										placeholder="Email"
-										keyboardType="email-address"
-										autoCapitalize="none"
-										onChangeText={field.onChange}
-										placeholderTextColor={"#8395A7"}
-										className={`h-13 font-nunito-regular border ${isLoginError ? "border-[#EF476F]" : "border-[#D9E3E8]"}  text-[#37474F] text-lg rounded-lg px-4 py-2.5`}
-									/>
+									<TextField isInvalid={!!errors.email}>
+										<TextField.Label className="text-lg text-[#1E1E1E] font-nunito-medium">
+											Email
+										</TextField.Label>
+										<Animated.View style={animatedStyle} className="rounded-xl">
+											<TextField.Input
+												{...field}
+												keyboardType="email-address"
+												onChangeText={field.onChange}
+												className="text-lg font-nunito-regular border-0 px-4 min-h-14 text-[#37474F]"
+												onFocus={handleFocus}
+												onBlur={() => {
+													field.onBlur();
+													handleBlur();
+												}}
+												placeholder="Enter your email"
+												autoCapitalize="none"
+												autoCorrect={false}
+												autoComplete="email"
+											/>
+										</Animated.View>
+										{errors.email && (
+											<TextField.ErrorMessage>
+												<View className="flex-row items-center mt-2 px-1">
+													<Ionicons
+														name="alert-circle"
+														size={16}
+														color="#EF4444"
+														className="mr-1.5"
+													/>
+													<Text className="text-sm text-red-500 flex-1">
+														{errors?.email?.message}
+													</Text>
+												</View>
+											</TextField.ErrorMessage>
+										)}
+									</TextField>
 								)}
 							/>
-							{methods.formState.errors.email && (
-								<Text className="text-[#EF476F]">
-									{methods.formState.errors.email.message}
-								</Text>
-							)}
 						</View>
 						<View className="gap-2">
 							<Text className="font-nunito-medium text-lg text-[#1E1E1E]">
 								Password
 							</Text>
-							<View className={`flex-row items-center rounded-lg`}>
-								<Controller
-									control={methods.control}
-									name="password"
-									render={({ field }) => (
-										<SecureTextField
-											{...field}
-											error={isLoginError}
-											onChangeText={field.onChange}
-											placeholder="Password"
-											returnKeyType="send"
-										/>
-									)}
-								/>
-							</View>
-							{methods.formState.errors.password && (
-								<Text className="text-[#EF476F]">
-									{methods.formState.errors.password.message}
-								</Text>
-							)}
+							<Controller
+								control={methods.control}
+								name="password"
+								render={({ field }) => (
+									<PasswordInput
+										{...field}
+										error={errors.password?.message}
+										onChangeText={field.onChange}
+									/>
+								)}
+							/>
 						</View>
-						<Pressable
-							disabled={!methods.formState.isValid || isLoading}
+						<TouchableHighlight
+							disabled={!isValid || isLoading}
+							underlayColor={"#04bf8f"}
+							className={`h-12 justify-center rounded-xl items-center ${
+								isLoading || !isValid ? "bg-[#035440]" : "bg-[#07D19D]"
+							}`}
 							onPress={methods.handleSubmit(onSubmit)}
-							className="bg-[#06D6A0] h-12 justify-center items-center rounded-xl"
 						>
 							{isLoading ? (
 								<ActivityIndicator size="small" color="white" />
 							) : (
-								<Text className="font-nunito-bold text-lg text-white">
+								<Text className="text-lg text-white font-nunito-bold">
 									Login
 								</Text>
 							)}
-						</Pressable>
+						</TouchableHighlight>
 						<View className="flex flex-row gap-1 items-center justify-center">
 							<Text className="font-nunito-regular text-[#8395A7] text-md">
 								Don't have an account?

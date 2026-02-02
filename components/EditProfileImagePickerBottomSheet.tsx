@@ -1,6 +1,16 @@
 import { BottomSheet } from "heroui-native";
-import { launchImageLibraryAsync, requestMediaLibraryPermissionsAsync  } from "expo-image-picker";
-import { Pressable, View, TouchableHighlight, Image, Text, Keyboard } from "react-native";
+import {
+	launchImageLibraryAsync,
+	requestMediaLibraryPermissionsAsync,
+} from "expo-image-picker";
+import {
+	Pressable,
+	View,
+	TouchableHighlight,
+	Image,
+	Text,
+	Keyboard,
+} from "react-native";
 import { toast } from "sonner-native";
 import { useState } from "react";
 import Icon from "react-native-remix-icon";
@@ -29,7 +39,7 @@ export const BottomSheetEditProfile = () => {
 				<Pressable
 					onPress={() => {
 						Keyboard.isVisible() && Keyboard.dismiss();
-						setPickedImage(null)
+						setPickedImage(null);
 					}}
 					className="p-2 rounded-full"
 				>
@@ -51,16 +61,24 @@ export const BottomSheetEditProfile = () => {
 
 						{/* Image in the middle */}
 						<View className="items-center justify-center">
-							<View className="border-2 border-[#D9E3E8] items-center justify-center size-56 rounded-full">
+							<View className="items-center justify-center size-60 rounded-full">
 								{!pickedImage ? (
 									<Image
 										source={require("app/assets/IMG_2110.jpg")}
-										className="rounded-full size-55"
+										style={{
+											borderWidth: 2,
+											borderColor: "#D9E3E8",
+										}}
+										className="rounded-full size-60"
 									/>
 								) : (
 									<Image
 										source={{ uri: pickedImage }}
-										className="rounded-full size-55"
+										style={{
+											borderWidth: 2,
+											borderColor: "#D9E3E8",
+										}}
+										className="rounded-full size-60"
 									/>
 								)}
 							</View>
