@@ -10,7 +10,7 @@ export const categorySchema = z.object({
 export type CategoryForm = z.infer<typeof categorySchema>;
 
 export const loginSchema = z.object({
-	email: z.email({ error: "Email is required" }),
+	email: z.email({ error: "Enter a valid email address" }),
 	password: z.string().nonempty({ error: "Password is required" }),
 });
 

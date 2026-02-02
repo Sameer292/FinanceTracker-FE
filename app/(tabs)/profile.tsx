@@ -1,8 +1,7 @@
-import { Separator } from "app/components/Separator";
 import { useAuth } from "app/context/AuthContext";
-import { type Href, Link } from "expo-router";
+import { type Href, router } from "expo-router";
 import { Divider } from "heroui-native";
-import { Image, Pressable, Text, View } from "react-native";
+import { Image, Text, TouchableHighlight, View } from "react-native";
 import Icon, { type IconName } from "react-native-remix-icon";
 
 export default function profile() {
@@ -12,13 +11,9 @@ export default function profile() {
 			{/* Header */}
 			<View className="flex relative justify-center w-full px-4 items-center">
 				<Text className="text-2xl font-nunito-bold">Profile</Text>
-				<View className="absolute left-0">
-					{/* <Icon name={'chevron-left'} size={35} color={'#000'} /> */}
-				</View>
 			</View>
 			{/* Body */}
 			<View className="flex-1 w-full gap-12 items-center ">
-				{/* Title */}
 				<View className="w-full gap-4 items-center">
 					<View className="justify-center items-center size-32 rounded-full">
 						<Image
@@ -46,7 +41,7 @@ export default function profile() {
 							icon="lock-password-fill"
 						/>
 						<ProfileOptionCard
-							linkRef={"/addCategories"}
+							linkRef={"/currency"}
 							text="Currency"
 							icon="currency-fill"
 						/>
@@ -56,12 +51,13 @@ export default function profile() {
 						variant="thin"
 						className="border-[#D9E3E8] border-t"
 					/>
-					<Pressable
+					<TouchableHighlight
+						underlayColor={'#e8dada'}
 						onPress={logout}
 						className="h-14 w-full rounded-xl bg-[#FDEEEE] justify-center items-center"
 					>
 						<Text className="text-xl font-semibold text-[#D9534F]">Logout</Text>
-					</Pressable>
+					</TouchableHighlight>
 				</View>
 			</View>
 		</View>
@@ -78,8 +74,12 @@ const ProfileOptionCard = ({
 	linkRef: Href;
 }) => {
 	return (
-		<Link href={linkRef}>
-			<View className="h-20 w-full rounded-xl border-[#D9E3E8] border flex px-4 flex-row justify-between items-center">
+		<TouchableHighlight
+			onPress={() => router.push(linkRef)}
+			underlayColor={"#e6e3e6"}
+			className="h-20 w-full rounded-xl border-[#D9E3E8] border"
+		>
+			<View className="flex-1 flex-row justify-between items-center px-4">
 				<View className="flex-row items-center gap-5">
 					<View className="rounded-full p-3 bg-[#06D6A0]">
 						<Icon name={icon} color={"white"} size={25} />
@@ -92,6 +92,6 @@ const ProfileOptionCard = ({
 					<Icon name={"arrow-right-s-line"} size={30} />
 				</View>
 			</View>
-		</Link>
+		</TouchableHighlight>
 	);
 };

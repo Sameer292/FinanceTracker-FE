@@ -100,6 +100,10 @@ const Stacks = () => {
 						name="(auth)/change-password"
 						options={{ animation: "fade" }}
 					/>
+					<Stack.Screen
+						name="currency"
+						options={{ animation: "fade" }}
+					/>
 				</Stack.Protected>
 			</Stack>
 		</SafeAreaView>

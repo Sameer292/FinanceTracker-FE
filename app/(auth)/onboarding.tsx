@@ -10,8 +10,8 @@ export default function OnboardingScreen() {
 		router.replace("/login");
 	};
 	return (
-		<View className={"bg-linear-to-b flex-1 from-[#FFF] to-[#06D6A0]"}>
-			<BottomSheet isOpen={true} isDefaultOpen={true}>
+		<View className={"bg-linear-to-b flex-1 from-white to-[#06D6A0]"}>
+			<BottomSheet isOpen isDefaultOpen>
 				<BottomSheet.Portal>
 					<BottomSheet.Content
 						snapPoints={["45%"]}
