@@ -3,15 +3,20 @@ import { BottomSheet } from "heroui-native";
 import { HomeIcon } from "app/assets/SVGIcons/SVGIconsCustom";
 import { TouchableHighlight } from "react-native";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 
 export default function OnboardingScreen() {
 	const router = useRouter();
 	const handleStartedPress = () => {
 		router.replace("/login");
 	};
+	const [isOpen, setIsOpen] = useState<boolean>()
+	useEffect(()=>{
+		setIsOpen(true)
+	},[])
 	return (
 		<View className={"bg-linear-to-b flex-1 from-white to-[#06D6A0]"}>
-			<BottomSheet isOpen isDefaultOpen>
+			<BottomSheet isOpen={isOpen}>
 				<BottomSheet.Portal>
 					<BottomSheet.Content
 						snapPoints={["45%"]}
@@ -28,7 +33,7 @@ export default function OnboardingScreen() {
 						<View className={"flex-1 justify-between "}>
 							<View className="justify-center gap-8 items-center">
 								<HomeIcon />
-								<View className="gap-2 w-full jestify-center items-center">
+								<View className="gap-2 w-full items-center">
 									<Text className="text-[#073B4C] font-nunito-bold text-4xl">
 										Expensia
 									</Text>
