@@ -22,13 +22,18 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter();
 	const queryClient = useQueryClient();
+	const [authStatus, setAuthStatus] =
+		useState<AuthContextType["authStatus"]>("loading");
 
-	const { data: user, isLoading } = useQuery({
+	const [tokenExists, setTokenExists] = useState<boolean | null>(null);
+
+	const { data: user, isFetching } = useQuery({
 		queryKey: ["me"],
 		queryFn: async () => {
 			const res = await apiClient.get<User>("/me");
 			return res.data;
 		},
+		enabled: tokenExists === true,
 		retry: false,
 	});
 
@@ -39,6 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		},
 		onSuccess: async (data) => {
 			await AsyncStorage.setItem("accessToken", data.access_token);
+			setTokenExists(true);
 			queryClient.invalidateQueries({ queryKey: ["me"] });
 		},
 		onError: (err) => {
@@ -73,24 +79,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const logout = async () => {
 		await AsyncStorage.removeItem("accessToken");
 		setAuthStatus("unauthenticated");
-		queryClient.resetQueries({ queryKey: ["me"] });
 	};
 
-	const [authStatus, setAuthStatus] = useState<AuthContextType["authStatus"]>(
-		() => {
-			return isLoading ? "loading" : user ? "authenticated" : "unauthenticated";
-		},
-	);
+	useEffect(() => {
+		const checkToken = async () => {
+			const token = await AsyncStorage.getItem("accessToken");
+			setTokenExists(!!token);
+			setAuthStatus(token ? "loading" : "unauthenticated");
+		};
+
+		checkToken();
+	}, []);
 
 	useEffect(() => {
-		setAuthStatus(() => {
-			return isLoading || loginMutation.isPending
-				? "loading"
-				: user
-					? "authenticated"
-					: "unauthenticated";
-		});
-	}, [isLoading, user, loginMutation.isPending]);
+		if (tokenExists === false) {
+			setAuthStatus("unauthenticated");
+			return;
+		}
+
+		if (tokenExists === true && user === undefined && isFetching) {
+			setAuthStatus("loading");
+			return;
+		}
+		setAuthStatus(user ? "authenticated" : "unauthenticated");
+	}, [tokenExists, isFetching, user]);
 
 	return (
 		<AuthContext.Provider
